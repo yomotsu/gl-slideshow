@@ -3,14 +3,16 @@
 var browserSync = require( 'browser-sync' ).create();
 var reload      = browserSync.reload;
 
-var gulp        = require( 'gulp' );
 var browserify  = require( 'browserify' );
 var babelify    = require( 'babelify' );
 var source      = require( 'vinyl-source-stream' );
 
+var gulp        = require( 'gulp' );
+var addSrc      = require( 'gulp-add-src' );
 var concat      = require( 'gulp-concat' );
 var plumber     = require( 'gulp-plumber' );
 var rename      = require( 'gulp-rename' );
+var streamify   = require( 'gulp-streamify' );
 var uglify      = require( 'gulp-uglify' );
 var watch       = require( 'gulp-watch' );
 var runSequence = require( 'run-sequence' ).use( gulp );
@@ -46,23 +48,12 @@ gulp.task( 'browserify', function () {
 
   } )
   .pipe( source( 'GLSlideshow.js' ) )
-  .pipe( gulp.dest( './build/' ) )
-
-} );
-
-
-gulp.task( 'pack', function () {
-
-  return gulp.src( [
-    'src/_header.js',
-    'build/GLSlideshow.js'
-  ] )
-  .pipe( plumber() )
-  .pipe( concat( 'GLSlideshow.js' ) )
+  .pipe( addSrc.prepend( 'src/_header.js' ) )
+  .pipe( streamify( concat( 'GLSlideshow.js' ) ) )
   .pipe( gulp.dest( './build/' ) )
   .pipe( uglify( { preserveComments: 'some' } ) )
   .pipe( rename( { extname: '.min.js' } ) )
-  .pipe( gulp.dest( './build/' ) );
+  .pipe( gulp.dest( './build/' ) )
 
 } );
 
@@ -75,8 +66,9 @@ gulp.task( 'watch', function () {
 
 } );
 
+
 gulp.task( 'default', function ( callback ) {
 
-  return runSequence( 'browser-sync', 'browserify', 'pack', 'watch', callback );
+  return runSequence( 'browser-sync', 'browserify', 'watch', callback );
 
 } );
