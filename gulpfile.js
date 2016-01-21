@@ -61,7 +61,7 @@ gulp.task( 'browserify', function () {
 gulp.task( 'watch', function () {
 
   watch( [ './src/*.js' ], function () {
-    runSequence( 'browserify', 'pack', browserSync.reload );
+    runSequence( 'browserify', browserSync.reload );
   } );
 
 } );

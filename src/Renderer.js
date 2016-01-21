@@ -1,4 +1,3 @@
-
 /**
  * Primitive Renderer class.
  * @class WebGLRenderer
@@ -10,7 +9,7 @@
  * @param {String} params.shader
  */
 
- export default class Renderer {
+export default class Renderer {
 
 	constructor ( images, params ) {
 
@@ -20,11 +19,12 @@
 		this.startTime = Date.now();
 		this.elapsedTime = 0;
 		this.isRunning   = true;
-		this.isAnimating = false;
+		this.inTranstion = false;
 		this.duration = params && params.duration || 1000;
 		this.interval = Math.max( params && params.interval || 5000, this.duration );
 		this.isUpdated = true;
 		this.domElement = document.createElement( 'canvas' );
+		this.context2d = this.domElement.getContext( '2d' );
 		this.images = [];
 
 		images.forEach( function ( image, i ) { that.insert( image, i ); } );
@@ -39,7 +39,7 @@
 		this.transitionStartTime = Date.now();
 		this.startTime = Date.now();
 		this.count = to;
-		this.isAnimating = true;
+		this.inTranstion = true;
 		this.isUpdated = true;
 
 	}
@@ -81,7 +81,7 @@
 
 		requestAnimationFrame( this.tick.bind( this ) );
 
-		if ( this.isUpdated || this.isAnimating ) { this.render(); }
+		if ( this.isUpdated ) { this.render(); }
 
 	}
 

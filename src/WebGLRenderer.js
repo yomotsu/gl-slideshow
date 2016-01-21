@@ -3,9 +3,7 @@ import WebGLTexture from './WebGLTexture.js';
 
 var vertexShaderSource = `
 attribute vec2 position;
-void main(){
-	gl_Position = vec4( position, 1., 1. );
-}
+void main () { gl_Position = vec4( position, 1., 1. ); }
 `;
 
 /**
@@ -27,11 +25,12 @@ export default class WebGLRenderer extends Renderer {
 
 		var that = this;
 
-		this.gl = this.domElement.getContext( 'webgl' ) ||
-		          this.domElement.getContext( 'experimental-webgl' );
+		this.glCanvas = document.createElement( 'canvas' );
+		this.gl = this.glCanvas.getContext( 'webgl' ) ||
+		          this.glCanvas.getContext( 'experimental-webgl' );
 		this.resolution = new Float32Array( [
-			params && params.width  || this.domElement.width,
-			params && params.height || this.domElement.height
+			params && params.width  || this.glCanvas.width,
+			params && params.height || this.glCanvas.height
 		] );
 
 		this.vertexShader = this.gl.createShader( this.gl.VERTEX_SHADER );
@@ -152,6 +151,8 @@ export default class WebGLRenderer extends Renderer {
 
 		super.setSize( w, h );
 
+		this.glCanvas.width  = w;
+		this.glCanvas.height = h;
 		this.resolution[ 0 ] = w;
 		this.resolution[ 1 ] = h;
 		this.gl.viewport( 0, 0, w, h );
@@ -163,34 +164,42 @@ export default class WebGLRenderer extends Renderer {
 	render () {
 
 		var transitionElapsedTime = 0;
-		var progress = 0;
+		var progress = 1;
 
-		if ( this.isAnimating ) {
+		if ( this.inTranstion ) {
 
 			transitionElapsedTime = Date.now() - this.transitionStartTime;
-			progress = this.isAnimating ? Math.min( transitionElapsedTime / this.duration, 1.0 ) : 0;
+			progress = this.inTranstion ? Math.min( transitionElapsedTime / this.duration, 1 ) : 0;
 
-			if ( progress === 1.0 ) {
+			// this.gl.clearColor( 0, 0, 0, 1 );
+			this.gl.uniform1f( this.uniforms.progress, progress );
+			this.gl.clear( this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT );
+			this.gl.drawArrays( this.gl.TRIANGLES, 0, 6 );
+			this.gl.flush();
+			this.context2d.drawImage( this.glCanvas, 0, 0 );
 
-				this.isAnimating = false;
+			if ( progress === 1 ) {
+
+				this.context2d.drawImage( this.to.image, 0, 0, this.resolution[ 0 ], this.resolution[ 1 ] );
+				this.inTranstion = false; // may move to tick()
+				this.isUpdated = false;
+				// transitionEnd!
 
 			}
 
-		}
+		} else {
 
-		// this.gl.clearColor( 0, 0, 0, 1 );
-		this.gl.uniform1f( this.uniforms.progress, progress );
-		this.gl.clear( this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT );
-		this.gl.drawArrays( this.gl.TRIANGLES, 0, 6 );
-		this.gl.flush();
-		this.isUpdated = false;
+			this.context2d.drawImage( this.images[ this.count ], 0, 0, this.resolution[ 0 ], this.resolution[ 1 ] );
+			this.isUpdated = false;
+
+		}
 
 	}
 
 	dispose () {
 
 		this.isRunning   = false;
-		this.isAnimating = false;
+		this.inTranstion = false;
 		this.from.image.removeEventListener( this.from.onload );
 		this.to.image.removeEventListener( this.to.onload );
 
@@ -198,14 +207,36 @@ export default class WebGLRenderer extends Renderer {
 
 		if ( this.program ) {
 
+			this.gl.activeTexture( this.gl.TEXTURE0 );
+			this.gl.bindTexture( this.gl.TEXTURE_2D, null );
+			this.gl.activeTexture( this.gl.TEXTURE1 );
+			this.gl.bindTexture( this.gl.TEXTURE_2D, null );
+			this.gl.bindBuffer( this.gl.ARRAY_BUFFER, null );
+			// this.gl.bindBuffer( this.gl.ELEMENT_ARRAY_BUFFER, null );
+			// this.gl.bindRenderbuffer( this.gl.RENDERBUFFER, null );
+			// this.gl.bindFramebuffer( this.gl.FRAMEBUFFER, null );
+
 			this.gl.deleteTexture( this.from.texture );
 			this.gl.deleteTexture( this.to.texture );
 			this.gl.deleteBuffer( this.vertexBuffer );
+			// this.gl.deleteRenderbuffer( ... );
+			// this.gl.deleteFramebuffer( ... );
 			this.gl.deleteShader( this.vertexShader );
 			this.gl.deleteShader( this.fragmentShader );
 			this.gl.deleteProgram( this.program );
 
 		}
+
+		this.setSize( 1, 1 );
+
+		if ( !!this.domElement.parentNode ) {
+
+			this.domElement.parentNode.removeChild( this.domElement );
+
+		}
+
+		delete this.domElement;
+		delete this.glCanvas;
 
 	}
 
