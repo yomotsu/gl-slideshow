@@ -1,4 +1,3 @@
-import EventDispatcher from './EventDispatcher.js';
 import WebGLRenderer   from './WebGLRenderer.js';
 import CanvasRenderer  from './CanvasRenderer.js';
 import shaderLib       from './shaderLib.js';
