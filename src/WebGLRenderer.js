@@ -29,8 +29,8 @@ export default class WebGLRenderer extends Renderer {
 		this.gl = this.glCanvas.getContext( 'webgl' ) ||
 		          this.glCanvas.getContext( 'experimental-webgl' );
 		this.resolution = new Float32Array( [
-			params && params.width  || this.glCanvas.width,
-			params && params.height || this.glCanvas.height
+			params && params.width  || this.domElement.width,
+			params && params.height || this.domElement.height
 		] );
 
 		this.vertexShader = this.gl.createShader( this.gl.VERTEX_SHADER );
@@ -51,7 +51,7 @@ export default class WebGLRenderer extends Renderer {
 
 		if ( this.program ) {
 
-			this.from.image.removeEventListener( this.from.onload );
+			this.from.image.removeEventListener( this.from.onload ); // should be moved to WebGLTexture and use dispose() method
 			this.to.image.removeEventListener( this.to.onload );
 
 			this.gl.deleteTexture( this.from.texture );
@@ -180,7 +180,7 @@ export default class WebGLRenderer extends Renderer {
 
 			if ( progress === 1 ) {
 
-				this.context2d.drawImage( this.to.image, 0, 0, this.resolution[ 0 ], this.resolution[ 1 ] );
+				this.context2d.drawImage( this.to.image, 0, 0, this.domElement.width, this.domElement.height );
 				this.inTranstion = false; // may move to tick()
 				this.isUpdated = false;
 				// transitionEnd!
@@ -189,7 +189,7 @@ export default class WebGLRenderer extends Renderer {
 
 		} else {
 
-			this.context2d.drawImage( this.images[ this.count ], 0, 0, this.resolution[ 0 ], this.resolution[ 1 ] );
+			this.context2d.drawImage( this.images[ this.count ], 0, 0, this.domElement.width, this.domElement.height );
 			this.isUpdated = false;
 
 		}
