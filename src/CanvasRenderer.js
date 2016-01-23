@@ -1,5 +1,5 @@
 import Renderer from './Renderer.js';
-import Texture from  './Texture.js';
+import Texture  from './Texture.js';
 
 /**
  * Canvas Renderer class.
@@ -80,8 +80,6 @@ export default class CanvasRenderer extends Renderer {
 
 		this.isRunning   = false;
 		this.inTranstion = false;
-		this.from.image.removeEventListener( this.from.onload );
-		this.to.image.removeEventListener( this.to.onload );
 
 		this.tick = function () {}
 
@@ -93,6 +91,8 @@ export default class CanvasRenderer extends Renderer {
 
 		}
 
+		delete this.from;
+		delete this.to;
 		delete this.domElement;
 
 	}

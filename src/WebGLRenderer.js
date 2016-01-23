@@ -1,5 +1,5 @@
-import Renderer     from './Renderer.js';
-import WebGLTexture from './WebGLTexture.js';
+import Renderer from './Renderer.js';
+import Texture  from './Texture.js';
 
 var vertexShaderSource = `
 attribute vec2 position;
@@ -50,9 +50,6 @@ export default class WebGLRenderer extends Renderer {
 		var uniforms = GLSlideshow.shaderLib[ fragmentShaderType ].uniforms;
 
 		if ( this.program ) {
-
-			this.from.image.removeEventListener( this.from.onload ); // should be moved to WebGLTexture and use dispose() method
-			this.to.image.removeEventListener( this.to.onload );
 
 			this.gl.deleteTexture( this.from.texture );
 			this.gl.deleteTexture( this.to.texture );
@@ -105,14 +102,14 @@ export default class WebGLRenderer extends Renderer {
 
 		}
 
-		this.from = new WebGLTexture( this.gl, this.images[ this.count ] );
-		this.to   = new WebGLTexture( this.gl, this.images[ this.getNext() ] );
+		this.from = new Texture( this.images[ this.count     ], this.gl );
+		this.to   = new Texture( this.images[ this.getNext() ], this.gl );
 
-		this.from.addEventListener( 'updated', this.updateWebGLTexture.bind( this ) );
-		this.to.addEventListener  ( 'updated', this.updateWebGLTexture.bind( this ) );
+		this.from.addEventListener( 'updated', this.updateTexture.bind( this ) );
+		this.to.addEventListener  ( 'updated', this.updateTexture.bind( this ) );
 
 		this.setSize( this.resolution[ 0 ], this.resolution[ 1 ] );
-		this.updateWebGLTexture();
+		this.updateTexture();
 
 	}
 
@@ -133,7 +130,7 @@ export default class WebGLRenderer extends Renderer {
 
 	}
 
-	updateWebGLTexture () {
+	updateTexture () {
 
 		this.gl.activeTexture( this.gl.TEXTURE0 );
 		this.gl.bindTexture( this.gl.TEXTURE_2D, this.from.texture );
@@ -200,8 +197,6 @@ export default class WebGLRenderer extends Renderer {
 
 		this.isRunning   = false;
 		this.inTranstion = false;
-		this.from.image.removeEventListener( this.from.onload );
-		this.to.image.removeEventListener( this.to.onload );
 
 		this.tick = function () {}
 
@@ -235,6 +230,8 @@ export default class WebGLRenderer extends Renderer {
 
 		}
 
+		delete this.from;
+		delete this.to;
 		delete this.domElement;
 		delete this.glCanvas;
 
