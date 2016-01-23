@@ -38,8 +38,13 @@ gulp.task( 'browserify', function () {
     standalone: 'GLSlideshow'
   } )
   .transform( babelify.configure( {
-    presets: [ 'es2015' ],
-    plugins: [ 'add-module-exports' ]
+    presets: [ 'es2015-loose' ],
+    plugins: [
+      'add-module-exports',
+      // for IE9
+      // see https://gist.github.com/zertosh/4f818163e4d68d58c0fa
+      'transform-proto-to-assign'
+    ]
   } ) )
   .bundle()
   .on( 'error', function( err ) {
