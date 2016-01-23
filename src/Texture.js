@@ -1,7 +1,5 @@
 import EventDispatcher from './EventDispatcher.js';
 
-var textureCanvas = document.createElement( 'canvas' );
-var textureCanvasContext = textureCanvas.getContext( '2d' );
 var defaultImage = new Image();
 defaultImage.src = 'data:image/gif;base64,R0lGODlhAgACAPAAAP///wAAACwAAAAAAgACAEACAoRRADs=';
 
@@ -27,8 +25,6 @@ export default class WebGLTexture {
 		};
 
 		this.setImage( this.image );
-
-		// document.body.appendChild( this.textureCanvas );
 
 	}
 
