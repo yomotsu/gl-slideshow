@@ -464,7 +464,7 @@ var WebGLTexture = function () {
 
 		this.image = image;
 
-		if (gl instanceof WebGLRenderingContext) {
+		if (!!gl && gl instanceof WebGLRenderingContext) {
 
 			this.gl = gl;
 			this.texture = gl.createTexture();
