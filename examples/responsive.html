@@ -12,21 +12,21 @@
 </head>
 <body>
 
-<div id="slideshow"></div>
+<div id="slideshow-placeholder"></div>
 
 <script src="../build/GLSlideshow.js"></script>
 <script>
-var $container = document.getElementById( 'slideshow' );
+var container = document.getElementById( 'slideshow-placeholder' );
 var slideshow = new GLSlideshow.WebGLRenderer(
 	[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ]
 );
 updateSize();
-$container.appendChild( slideshow.domElement );
+container.appendChild( slideshow.domElement );
 window.addEventListener( 'resize', updateSize );
 
 function updateSize () {
 
-	var width  = $container.clientWidth;
+	var width  = container.clientWidth;
 	var height = width * 9 / 16;
 	slideshow.setSize( width, height );
 

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>=^.^=</title>
+<style>
+body{
+	font-size: 16px;
+	margin: 0;
+	padding: 300px 0 0 0;
+}
+button, select{
+	font-size: 100%;
+}
+pre{
+	color: #fff;
+	font-size: 100%;
+	margin: 0 0 6px;
+	padding: 6px;
+	background: #212121;
+}
+#slideshow-placeholder{
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 300px;
+	margin: auto;
+	position: fixed;
+	border-bottom: 2px solid #fff;
+	background: #212121;
+	box-shadow: 0 10px 10px rgba( 0, 0, 0, .4 );
+}
+#slideshow-placeholder canvas{
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	margin: auto;
+}
+.doc{}
+.doc__item{
+	padding: 10px;
+	background: #D4ECEB;
+	border-bottom:4px solid #E7E352;
+}
+.doc__item:nth-child(2n+1){
+	background: #79CEE0;
+}
+</style>
+</head>
+<body>
+
+<div id="slideshow-placeholder"></div>
+
+<script src="../build/GLSlideshow.js"></script>
+<script>
+var slideshow = new GLSlideshow.WebGLRenderer(
+	[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
+	{
+		width: 512,        // optional
+		height: 288,        // optional
+		duration: 1000,     // optional
+		interval: 5000,     // optional
+		effect: 'crossZoom' // optional
+	}
+);
+
+document.getElementById( 'slideshow-placeholder' ).appendChild( slideshow.domElement );
+
+</script>
+
+<div class="doc">
+
+	<div class="doc__item">
+		<pre><code>instance.pause();</code></pre>
+		<button onclick="slideshow.pause();">run</button>
+	</div>
+
+	<div class="doc__item">
+		<pre><code>instance.play();</code></pre>
+		<button onclick="slideshow.play();">run</button>
+	</div>
+
+	<div class="doc__item">
+		<pre><code>instance.getCurrent();</code></pre>
+		<button onclick="alert( slideshow.getCurrent() );">run</button>
+	</div>
+
+	<div class="doc__item">
+		<pre><code>instance.getPrev();</code></pre>
+		<button onclick="alert( slideshow.getPrev() );">run</button>
+	</div>
+
+	<div class="doc__item">
+		<pre><code>instance.getNext();</code></pre>
+		<button onclick="alert( slideshow.getNext() );">run</button>
+	</div>
+
+	<div class="doc__item">
+		<pre><code>instance.insert( 'img/extra.png', 3 );</code></pre>
+		<button onclick="slideshow.insert( 'img/extra.png', 3 );">run</button>
+	</div>
+
+	<div class="doc__item">
+		<pre><code>instance.remove( 0 );</code></pre>
+		<button onclick="slideshow.remove( 0 );">run</button>
+	</div>
+
+	<div class="doc__item">
+		<pre><code>instance.transition( 1 );</code></pre>
+		<button onclick="slideshow.transition( 1 );">run</button>
+	</div>
+
+	<div class="doc__item">
+		<pre><code>instance.insert( 'img/extra.png', 3 );</code></pre>
+		<button onclick="slideshow.insert( 'img/extra.png', 3 );">run</button>
+	</div>
+
+	<div class="doc__item">
+		<pre><code>instance.setSize( <select id="size">
+	<option>128, 72</option>
+	<option>256, 144</option>
+	<option selected>512, 288</option>
+</select> );</code></pre>
+<script>
+size.addEventListener( 'change', function () {
+	slideshow.setSize(
+		+this.value.split(',')[ 0 ],
+		+this.value.split(',')[ 1 ]
+	);
+} );
+</script>
+	</div>
+
+	<div class="doc__item">
+		<pre><code>instance.setEffect( '<select onchange="slideshow.setEffect( this.value );">
+	<option>crossFade</option>
+	<option selected>crossZoom</option>
+	<option>cube</option>
+	<option>wind</option>
+	<option>ripple</option>
+	<option>pageCurl</option>
+</select>' );</code></pre>
+	</div>
+
+	<div class="doc__item">
+		<pre><code>instance.duration = <select onchange="slideshow.duration = this.value;">
+	<option>250</option>
+	<option>500</option>
+	<option selected>1000</option>
+	<option>2000</option>
+	<option>4000</option>
+</select>;</code></pre>
+	</div>
+
+	<div class="doc__item">
+		<pre><code>instance.interval = <select onchange="slideshow.interval = this.value;">
+	<option>0</option>
+	<option>1000</option>
+	<option selected>5000</option>
+	<option>10000</option>
+</select>;</code></pre>
+
+</div>
+</body>
+</html>

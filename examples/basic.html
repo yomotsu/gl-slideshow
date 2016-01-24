@@ -3,21 +3,14 @@
 <head>
 <meta charset="utf-8">
 <title>=^.^=</title>
-<style>
-table{}
-th, td{
-	text-align: left;
-	border: 1px solid #ccc;
-}
-</style>
 </head>
 <body>
 
-<div id="slideshow"></div>
+<div id="slideshow-placeholder"></div>
 
 <script src="../build/GLSlideshow.js"></script>
 <script>
-var slideshow = new GLSlideshow.WebGLRenderer(
+var slideshow = GLSlideshow.autoDetectRenderer(
 	[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
 	{
 		width: 1024,        // optional
@@ -28,44 +21,8 @@ var slideshow = new GLSlideshow.WebGLRenderer(
 	}
 );
 
-document.getElementById( 'slideshow' ).appendChild( slideshow.domElement );
-
+document.getElementById( 'slideshow-placeholder' ).appendChild( slideshow.domElement );
 </script>
-<pre>
-var slideshow = new GLSlideshow.WebGLRenderer(
-	[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
-	{
-		width: 1024,        // optional
-		height: 576,        // optional
-		duration: 1000,     // optional
-		interval: 5000,     // optional
-		effect: 'crossZoom' // optional
-	}
-);
-</pre>
-
-<button onclick="slideshow.pause();">pause</button>
-<button onclick="slideshow.play();">play</button>
-<select onchange="slideshow.setEffect( this.value );">
-	<option>crossFade</option>
-	<option selected>crossZoom</option>
-	<option>cube</option>
-	<option>wind</option>
-	<option>ripple</option>
-	<option>pageCurl</option>
-</select>
-<button onclick="slideshow.insert( 'img/extra.png', 3 );">slideshow.insert( 'img/extra.png', 3 );</button>
-
-<table>
-	<tr><th>instance.pause();</th><td></td></tr>
-	<tr><th>instance.play();</th><td></td></tr>
-	<tr><th>instance.setSize( width, height );</th><td>width: number, height: number</td></tr>
-	<tr><th>instance.insert( image, order );</th><td>image: path to image or HTML image element</td></tr>
-	<tr><th>instance.remove( order );</th><td>order: number</td></tr>
-	<tr><th>instance.transition( to );</th><td>to: number</td></tr>
-	<tr><th>instance.setEffect( effectName [, uniforms ] );</th><td></td></tr>
-</table>
-
 
 </body>
 </html>

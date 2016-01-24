@@ -6,8 +6,9 @@ Also it supports fallback in 2D Canvas for WebGL disabled browsers such as IE9. 
 
 ## Examples
 
-- [Basic]()
-- [APIs]()
+- [Basic](http://yomotsu.github.io/GLSlideshow.js/examples/basic.html)
+- [Responsive](http://yomotsu.github.io/GLSlideshow.js/examples/apis.html)
+- [APIs](http://yomotsu.github.io/GLSlideshow.js/examples/responsive.html)
 
 ## How to use
 
@@ -29,7 +30,7 @@ var slideshow = GLSlideshow.audoDetectRenderer(
 		height: 576,        // optional
 		duration: 1000,     // optional
 		interval: 5000,     // optional
-		shader: 'crossZoom' // optional
+		effect: 'crossZoom' // optional
 	}
 );
 
@@ -50,7 +51,7 @@ $( function () {
 			height: 576,        // optional
 			duration: 1000,     // optional
 			interval: 5000,     // optional
-			shader: 'crossZoom' // optional
+			effect: 'crossZoom' // optional
 		}
 	);
 
@@ -61,27 +62,31 @@ $( function () {
 </script>
 ```
 
-## Options
+## Constructor and Options
 
-function: GLSlideshow.audoDetectRenderer( images, options )
-class: GLSlideshow.CanvasRenderer( images, options )
-class: GLSlideshow.WebGLRenderer( images, options )
+- function: `GLSlideshow.audoDetectRenderer( images, options )`
+  returns instance of WebGLRenderer or CanvasRenderer
+- class: `GLSlideshow.WebGLRenderer( images, options )`
+  make a WebGLRenderer instance
+- class: `GLSlideshow.CanvasRenderer( images, options )`
+  make a CanvasRenderer instance
 
-### images (requiered)
+### images (required)
 
 An array that consists of Image element or string for path to image.
 images must be hosted same domain or arrowed CORS.
 
 ### othre options (optional)
 
-| ---      | --- |
-| width    | number: width in pixels |
-| height   | number: height in pixels |
-| duration | number: duration time in milli second |
-| interval | number: interval time in milli second |
-| shader   | string: name of shader *1 |
+| key        | value |
+| ---        | ---   |
+| `width`    | number: width in pixels |
+| `height`   | number: height in pixels |
+| `duration` | number: duration time in milli second |
+| `interval` | number: interval time in milli second |
+| `effect`   | string: name of effect *1 |
 
-*1 currently supoprts following shaders
+*1 effect option currently supoprts following effects
 
 - `'crossFade'`
 - `'crossZoom'`
@@ -92,10 +97,20 @@ images must be hosted same domain or arrowed CORS.
 
 ## APIs
 
-- `instance.pause();`
-- `instance.play();`
-- `instance.setSize( width, height );`
-- `instance.insert( image, order );`
-- `instance.remove( order );`
-- `instance.transition( to );`
-- `instance.setShaderProgram( shaderName [, uniforms ] );`
+After you made a instance, you can control using following methods.
+
+- `instance.pause()`
+- `instance.play()`
+- `instance.getCurrent()`
+- `instance.getPrev()`
+- `instance.getNext()`
+- `instance.setSize( width, height )`
+- `instance.insert( image, order )`
+- `instance.remove( order )`
+- `instance.transition( to )`
+- `instance.setEffect( effectName [, uniforms ] )`
+
+Also editable params
+
+- `instance.duration`
+- `instance.interval`
