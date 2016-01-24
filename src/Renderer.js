@@ -112,9 +112,21 @@ export default class Renderer {
 
 	}
 
+	getCurrent () {
+
+		return this.count;
+
+	}
+
 	getNext () {
 
 		return ( this.count < this.images.length - 1 ) ? this.count + 1 : 0;
+
+	}
+
+	getPrev () {
+
+		return ( this.count !== 0 ) ? this.count - 1 : this.images.length;
 
 	}
 
