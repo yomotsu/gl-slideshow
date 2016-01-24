@@ -24,7 +24,7 @@ var slideshow = new GLSlideshow.WebGLRenderer(
 		height: 576,        // optional
 		duration: 1000,     // optional
 		interval: 5000,     // optional
-		shader: 'crossZoom' // optional
+		effect: 'crossZoom' // optional
 	}
 );
 
@@ -39,14 +39,14 @@ var slideshow = new GLSlideshow.WebGLRenderer(
 		height: 576,        // optional
 		duration: 1000,     // optional
 		interval: 5000,     // optional
-		shader: 'crossZoom' // optional
+		effect: 'crossZoom' // optional
 	}
 );
 </pre>
 
 <button onclick="slideshow.pause();">pause</button>
 <button onclick="slideshow.play();">play</button>
-<select onchange="slideshow.setShaderProgram( this.value );">
+<select onchange="slideshow.setEffect( this.value );">
 	<option>crossFade</option>
 	<option selected>crossZoom</option>
 	<option>cube</option>
@@ -63,7 +63,7 @@ var slideshow = new GLSlideshow.WebGLRenderer(
 	<tr><th>instance.insert( image, order );</th><td>image: path to image or HTML image element</td></tr>
 	<tr><th>instance.remove( order );</th><td>order: number</td></tr>
 	<tr><th>instance.transition( to );</th><td>to: number</td></tr>
-	<tr><th>instance.setShaderProgram( shaderName [, uniforms ] );</th><td></td></tr>
+	<tr><th>instance.setEffect( effectName [, uniforms ] );</th><td></td></tr>
 </table>
 
 

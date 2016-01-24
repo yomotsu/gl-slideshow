@@ -20,11 +20,11 @@ var $container = document.getElementById( 'slideshow' );
 var slideshow = new GLSlideshow.WebGLRenderer(
 	[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ]
 );
-setWidth();
+updateSize();
 $container.appendChild( slideshow.domElement );
-window.addEventListener( 'resize', setWidth );
+window.addEventListener( 'resize', updateSize );
 
-function setWidth () {
+function updateSize () {
 
 	var width  = $container.clientWidth;
 	var height = width * 9 / 16;

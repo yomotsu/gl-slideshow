@@ -14,7 +14,7 @@ void main () { gl_Position = vec4( position, 1., 1. ); }
  * @param {Object} params
  * @param {Number} params.width
  * @param {Number} params.height
- * @param {String} params.shader
+ * @param {String} params.effect
  */
 
 export default class WebGLRenderer extends Renderer {
@@ -36,18 +36,18 @@ export default class WebGLRenderer extends Renderer {
 		this.vertexShader = this.gl.createShader( this.gl.VERTEX_SHADER );
 		this.gl.shaderSource( this.vertexShader, vertexShaderSource );
 		this.gl.compileShader( this.vertexShader );
-		this.setShaderProgram( params && params.shader || 'crossFade' );
+		this.setEffect( params && params.effect || 'crossFade' );
 
 		this.tick();
 
 	}
 
-	setShaderProgram ( fragmentShaderType, params ) {
+	setEffect ( effectName, params ) {
 
 		var i = 0;
 		var position;
-		var FSSource = GLSlideshow.shaderLib[ fragmentShaderType ].source;
-		var uniforms = GLSlideshow.shaderLib[ fragmentShaderType ].uniforms;
+		var FSSource = GLSlideshow.shaderLib[ effectName ].source;
+		var uniforms = GLSlideshow.shaderLib[ effectName ].uniforms;
 
 		if ( this.program ) {
 

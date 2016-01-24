@@ -6,7 +6,6 @@
  * @param {Object} params
  * @param {Number} params.width
  * @param {Number} params.height
- * @param {String} params.shader
  */
 
 export default class Renderer {
