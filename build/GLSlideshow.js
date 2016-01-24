@@ -267,6 +267,28 @@ exports.__esModule = true;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var rAF = function () {
+
+	var lastTime = 0;
+
+	if (!!window.requestAnimationFrame) {
+
+		return window.requestAnimationFrame;
+	} else {
+
+		return function (callback, element) {
+
+			var currTime = new Date().getTime();
+			var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+			var id = setTimeout(function () {
+				callback(currTime + timeToCall);
+			}, timeToCall);
+			lastTime = currTime + timeToCall;
+			return id;
+		};
+	}
+}();
+
 /**
  * Primitive Renderer class.
  * @class WebGLRenderer
@@ -345,7 +367,7 @@ var Renderer = function () {
 			// transition start
 		}
 
-		requestAnimationFrame(this.tick.bind(this));
+		rAF(this.tick.bind(this));
 
 		if (this.isUpdated) {
 			this.render();
