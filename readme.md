@@ -4,6 +4,8 @@ GLSlideshow.js is a JavaScript library for advanced 2D slideshow with WebGL, tha
 
 Also it supports fallback in 2D Canvas for WebGL disabled browsers such as IE9. (The canvas fallback only supports cross-fade)
 
+Shaders are forked from http://transitions.glsl.io/
+
 ## Examples
 
 - [Basic](http://yomotsu.github.io/GLSlideshow.js/examples/basic.html)
@@ -112,6 +114,7 @@ For more detail, see [APIs example](http://yomotsu.github.io/GLSlideshow.js/exam
 - `instance.remove( order )`
 - `instance.transition( to )`
 - `instance.setEffect( effectName [, uniforms ] )`
+- `instance.dipose()`
 
 Also editable params
 
