@@ -120,3 +120,8 @@ Also editable params
 
 - `instance.duration`
 - `instance.interval`
+
+Plus static methods
+
+- `GLSlideshow.hasCanvas()`
+- `GLSlideshow.hasWebGL()`
