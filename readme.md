@@ -7,19 +7,21 @@ Also it supports fallback in 2D Canvas for WebGL disabled browsers such as IE9. 
 ## Examples
 
 - [Basic](http://yomotsu.github.io/GLSlideshow.js/examples/basic.html)
-- [Responsive](http://yomotsu.github.io/GLSlideshow.js/examples/apis.html)
-- [APIs](http://yomotsu.github.io/GLSlideshow.js/examples/responsive.html)
+- [Responsive](http://yomotsu.github.io/GLSlideshow.js/examples/responsive.html)
+- [APIs](http://yomotsu.github.io/GLSlideshow.js/examples/apis.html)
 
 ## How to use
 
 Load the js file in your HTML
-```
+```html
 <script src="GLSlideshow.min.js"></script>
 ```
 
-Then make a slideshow instance. `autoDetectRenderer()` returns either WebGL slideshow instance for modern browsers, or Canvas slideshow instance for canvas available browsers as fallback.
+Then make a slideshow instance.
 
-```
+`autoDetectRenderer()` returns either WebGL slideshow instance for modern browsers, or Canvas slideshow instance for canvas available browsers as fallback.
+
+```html
 <div id="slideshow-placeholder"></div>
 
 <script>
@@ -40,7 +42,7 @@ document.getElementById( 'slideshow-placeholder' ).appendChild( slideshow.domEle
 
 If you would like to use with jQuery, just append using a jQuery feature, instead of pure DOM methods.
 
-```
+```html
 <script>
 $( function () {
 
@@ -64,17 +66,17 @@ $( function () {
 
 ## Constructor and Options
 
-- function: `GLSlideshow.audoDetectRenderer( images, options )`
+- function: `GLSlideshow.audoDetectRenderer( images, options )`  
   returns instance of WebGLRenderer or CanvasRenderer
-- class: `GLSlideshow.WebGLRenderer( images, options )`
+- class: `GLSlideshow.WebGLRenderer( images, options )`  
   make a WebGLRenderer instance
-- class: `GLSlideshow.CanvasRenderer( images, options )`
+- class: `GLSlideshow.CanvasRenderer( images, options )`  
   make a CanvasRenderer instance
 
 ### images (required)
 
 An array that consists of Image element or string for path to image.
-images must be hosted same domain or arrowed CORS.
+Images must be hosted the same domain or arrowed CORS.
 
 ### othre options (optional)
 
@@ -86,7 +88,7 @@ images must be hosted same domain or arrowed CORS.
 | `interval` | number: interval time in milli second |
 | `effect`   | string: name of effect *1 |
 
-*1 effect option currently supoprts following effects
+*1 Effect option currently takes following strings
 
 - `'crossFade'`
 - `'crossZoom'`
@@ -97,7 +99,8 @@ images must be hosted same domain or arrowed CORS.
 
 ## APIs
 
-After you made a instance, you can control using following methods.
+After you made an instance, you can control using following methods.  
+For more detail, see [APIs example](http://yomotsu.github.io/GLSlideshow.js/examples/apis.html)
 
 - `instance.pause()`
 - `instance.play()`
