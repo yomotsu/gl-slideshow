@@ -71,10 +71,11 @@ export default class Renderer {
 
 		}
 
-		if ( this.interval < this.elapsedTime ) {
+		if ( this.interval + this.duration < this.elapsedTime ) {
 
 			next = this.getNext();
 			this.transition( next );
+			// transition start
 
 		}
 
