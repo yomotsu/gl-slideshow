@@ -1,3 +1,31 @@
+
+var rAF = function () {
+
+	var lastTime = 0;
+
+	if ( !!window.requestAnimationFrame ) {
+
+		return window.requestAnimationFrame;
+
+	} else {
+
+		return function( callback, element ) {
+
+			var currTime = new Date().getTime();
+			var timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) );
+			var id = setTimeout(
+				function() { callback( currTime + timeToCall ); }, 
+				timeToCall
+			);
+			lastTime = currTime + timeToCall;
+			return id;
+
+		};
+
+	}
+
+}();
+
 /**
  * Primitive Renderer class.
  * @class WebGLRenderer
@@ -79,7 +107,7 @@ export default class Renderer {
 
 		}
 
-		requestAnimationFrame( this.tick.bind( this ) );
+		rAF( this.tick.bind( this ) );
 
 		if ( this.isUpdated ) { this.render(); }
 
