@@ -1,8 +1,8 @@
 # GLSlideshow.js
 
-GLSlideshow.js is a JavaScript library for advanced 2D slideshow with WebGL, that provides variety of beautiful effects with GLSL power!
+GLSlideshow.js is a JavaScript library for advanced 2D slideshow with WebGL, that provides a variety of beautiful effects with GLSL power!
 
-Also it supports fallback in 2D Canvas for WebGL disabled browsers such as IE9. (The canvas fallback only supports cross-fade)
+Also, it supports fallback in 2D Canvas for WebGL disabled browsers such as IE9. (The canvas fallback only supports cross-fade)
 
 Shaders are forked from http://transitions.glsl.io/
 
@@ -27,7 +27,7 @@ Then make a slideshow instance.
 <div id="slideshow-placeholder"></div>
 
 <script>
-var slideshow = GLSlideshow.audoDetectRenderer(
+var slideshow = GLSlideshow.autoDetectRenderer(
 	[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
 	{
 		width: 1024,        // optional
@@ -42,13 +42,13 @@ document.getElementById( 'slideshow-placeholder' ).appendChild( slideshow.domEle
 </script>
 ```
 
-If you would like to use with jQuery, just append using a jQuery feature, instead of pure DOM methods.
+If you would like to use with jQuery, just append using the jQuery feature, instead of pure DOM methods.
 
 ```html
 <script>
 $( function () {
 
-	var slideshow = GLSlideshow.audoDetectRenderer(
+	var slideshow = GLSlideshow.autoDetectRenderer(
 		[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
 		{
 			width: 1024,        // optional
@@ -68,26 +68,26 @@ $( function () {
 
 ## Constructor and Options
 
-- function: `GLSlideshow.audoDetectRenderer( images, options )`  
+- function: `GLSlideshow.autoDetectRenderer( images, options )`  
   returns instance of WebGLRenderer or CanvasRenderer
 - class: `GLSlideshow.WebGLRenderer( images, options )`  
-  make a WebGLRenderer instance
+  to make a WebGLRenderer instance
 - class: `GLSlideshow.CanvasRenderer( images, options )`  
-  make a CanvasRenderer instance
+  to make a CanvasRenderer instance
 
 ### images (required)
 
-An array that consists of Image element or string for path to image.
-Images must be hosted the same domain or arrowed CORS.
+An array that consists of Image elements or strings for path to image.  
+Images must be hosted on the same domain or arrowed CORS.
 
-### othre options (optional)
+### other options (optional)
 
 | key        | value |
 | ---        | ---   |
 | `width`    | number: width in pixels |
 | `height`   | number: height in pixels |
-| `duration` | number: duration time in milli second |
-| `interval` | number: interval time in milli second |
+| `duration` | number: duration time in milliseconds |
+| `interval` | number: interval time in milliseconds |
 | `effect`   | string: name of effect *1 |
 
 *1 Effect option currently takes following strings
@@ -101,7 +101,7 @@ Images must be hosted the same domain or arrowed CORS.
 
 ## APIs
 
-After you made an instance, you can control using following methods.  
+After you made an instance, you can control using the following methods.  
 For more detail, see [APIs example](http://yomotsu.github.io/GLSlideshow.js/examples/apis.html)
 
 - `instance.pause()`
