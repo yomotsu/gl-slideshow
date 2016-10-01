@@ -53,16 +53,17 @@ export default class CanvasRenderer extends Renderer {
 
 			if ( progress !== 1 ) {
 
-			this.context2d.drawImage( this.from.image, 0, 0, width, height );
-			this.context2d.globalAlpha = progress;
-			this.context2d.drawImage( this.to.image, 0, 0, width, height );
-			this.context2d.globalAlpha = 1;
+				this.context2d.drawImage( this.from.image, 0, 0, width, height );
+				this.context2d.globalAlpha = progress;
+				this.context2d.drawImage( this.to.image, 0, 0, width, height );
+				this.context2d.globalAlpha = 1;
 
 			} else {
 
 				this.context2d.drawImage( this.to.image, 0, 0, width, height );
 				this.inTranstion = false; // may move to tick()
 				this.isUpdated = false;
+				this.dispatchEvent( { type: 'transitionEnd' } );
 				// transitionEnd!
 
 			}

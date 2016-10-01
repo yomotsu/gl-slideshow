@@ -121,6 +121,11 @@ Also editable params
 - `instance.duration`
 - `instance.interval`
 
+Events
+
+- `instance.addEventListener( 'transitionStart', function () { /* callback */ } );`
+- `instance.addEventListener( 'transitionEnd',   function () { /* callback */ } );`
+
 Plus static methods
 
 - `GLSlideshow.hasCanvas()`

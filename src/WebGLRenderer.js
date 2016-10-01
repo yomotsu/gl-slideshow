@@ -180,6 +180,7 @@ export default class WebGLRenderer extends Renderer {
 				this.context2d.drawImage( this.to.image, 0, 0, this.domElement.width, this.domElement.height );
 				this.inTranstion = false; // may move to tick()
 				this.isUpdated = false;
+				this.dispatchEvent( { type: 'transitionEnd' } );
 				// transitionEnd!
 
 			}

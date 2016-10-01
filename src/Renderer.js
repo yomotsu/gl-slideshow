@@ -1,3 +1,4 @@
+import EventDispatcher from './EventDispatcher.js';
 
 var rAF = function () {
 
@@ -68,6 +69,7 @@ export default class Renderer {
 		this.count = to;
 		this.inTranstion = true;
 		this.isUpdated = true;
+		this.dispatchEvent( { type: 'transitionStart' } );
 
 	}
 
@@ -203,3 +205,5 @@ export default class Renderer {
 	}
 
 }
+
+EventDispatcher.prototype.apply( Renderer.prototype );
