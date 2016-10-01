@@ -14,7 +14,6 @@ var plumber     = require( 'gulp-plumber' );
 var rename      = require( 'gulp-rename' );
 var streamify   = require( 'gulp-streamify' );
 var uglify      = require( 'gulp-uglify' );
-var watch       = require( 'gulp-watch' );
 var runSequence = require( 'run-sequence' ).use( gulp );
 
 
@@ -65,7 +64,7 @@ gulp.task( 'browserify', function () {
 
 gulp.task( 'watch', function () {
 
-  watch( [ './src/*.js' ], function () {
+  gulp.watch( [ './src/*.js' ], function () {
     runSequence( 'browserify', browserSync.reload );
   } );
 
