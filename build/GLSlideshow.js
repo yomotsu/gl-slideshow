@@ -5,7 +5,11 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.GLSlideshow = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _Renderer2 = require('./Renderer.js');
 
@@ -41,7 +45,7 @@ var CanvasRenderer = function (_Renderer) {
 	function CanvasRenderer(images, params) {
 		_classCallCheck(this, CanvasRenderer);
 
-		var _this = _possibleConstructorReturn(this, _Renderer.call(this, images, params));
+		var _this = _possibleConstructorReturn(this, (CanvasRenderer.__proto__ || Object.getPrototypeOf(CanvasRenderer)).call(this, images, params));
 
 		var that = _this;
 
@@ -57,61 +61,66 @@ var CanvasRenderer = function (_Renderer) {
 		return _this;
 	}
 
-	CanvasRenderer.prototype.updateTexture = function updateTexture() {
+	_createClass(CanvasRenderer, [{
+		key: 'updateTexture',
+		value: function updateTexture() {
 
-		this.isUpdated = true;
-	};
+			this.isUpdated = true;
+		}
+	}, {
+		key: 'render',
+		value: function render() {
 
-	CanvasRenderer.prototype.render = function render() {
+			var transitionElapsedTime = 0;
+			var progress = 1;
+			var width = this.domElement.width;
+			var height = this.domElement.height;
 
-		var transitionElapsedTime = 0;
-		var progress = 1;
-		var width = this.domElement.width;
-		var height = this.domElement.height;
+			if (this.inTranstion) {
 
-		if (this.inTranstion) {
+				transitionElapsedTime = Date.now() - this.transitionStartTime;
+				progress = this.inTranstion ? Math.min(transitionElapsedTime / this.duration, 1) : 0;
 
-			transitionElapsedTime = Date.now() - this.transitionStartTime;
-			progress = this.inTranstion ? Math.min(transitionElapsedTime / this.duration, 1) : 0;
+				if (progress !== 1) {
 
-			if (progress !== 1) {
+					this.context2d.drawImage(this.from.image, 0, 0, width, height);
+					this.context2d.globalAlpha = progress;
+					this.context2d.drawImage(this.to.image, 0, 0, width, height);
+					this.context2d.globalAlpha = 1;
+				} else {
 
-				this.context2d.drawImage(this.from.image, 0, 0, width, height);
-				this.context2d.globalAlpha = progress;
-				this.context2d.drawImage(this.to.image, 0, 0, width, height);
-				this.context2d.globalAlpha = 1;
+					this.context2d.drawImage(this.to.image, 0, 0, width, height);
+					this.inTranstion = false; // may move to tick()
+					this.isUpdated = false;
+					// transitionEnd!
+				}
 			} else {
-
-				this.context2d.drawImage(this.to.image, 0, 0, width, height);
-				this.inTranstion = false; // may move to tick()
-				this.isUpdated = false;
-				// transitionEnd!
-			}
-		} else {
 
 				this.context2d.drawImage(this.images[this.count], 0, 0, width, height);
 				this.isUpdated = false;
 			}
-	};
-
-	CanvasRenderer.prototype.dispose = function dispose() {
-
-		this.isRunning = false;
-		this.inTranstion = false;
-
-		this.tick = function () {};
-
-		this.setSize(1, 1);
-
-		if (!!this.domElement.parentNode) {
-
-			this.domElement.parentNode.removeChild(this.domElement);
 		}
+	}, {
+		key: 'dispose',
+		value: function dispose() {
 
-		delete this.from;
-		delete this.to;
-		delete this.domElement;
-	};
+			this.isRunning = false;
+			this.inTranstion = false;
+
+			this.tick = function () {};
+
+			this.setSize(1, 1);
+
+			if (!!this.domElement.parentNode) {
+
+				this.domElement.parentNode.removeChild(this.domElement);
+			}
+
+			delete this.from;
+			delete this.to;
+			delete this.domElement;
+		}
+	}]);
 
 	return CanvasRenderer;
 }(_Renderer3.default);
@@ -122,7 +131,9 @@ module.exports = exports['default'];
 },{"./Renderer.js":4,"./Texture.js":5}],2:[function(require,module,exports){
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 /*!
  * @author mrdoob / http://mrdoob.com/
  */
@@ -219,12 +230,14 @@ EventDispatcher.prototype = {
 };
 
 exports.default = EventDispatcher;
-module.exports = exports['default'];
+module.exports = exports["default"];
 
 },{}],3:[function(require,module,exports){
 'use strict';
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
 var _utils = require('./utils.js');
 
@@ -263,7 +276,11 @@ module.exports = exports['default'];
 },{"./CanvasRenderer.js":1,"./WebGLRenderer.js":6,"./autoDetectRenderer.js":7,"./shaderLib.js":8,"./utils.js":9}],4:[function(require,module,exports){
 'use strict';
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -322,133 +339,152 @@ var Renderer = function () {
 		});
 	}
 
-	Renderer.prototype.transition = function transition(to) {
+	_createClass(Renderer, [{
+		key: 'transition',
+		value: function transition(to) {
 
-		this.from.setImage(this.images[this.count]);
-		this.to.setImage(this.images[to]);
+			this.from.setImage(this.images[this.count]);
+			this.to.setImage(this.images[to]);
 
-		this.transitionStartTime = Date.now();
-		this.startTime = Date.now();
-		this.count = to;
-		this.inTranstion = true;
-		this.isUpdated = true;
-	};
+			this.transitionStartTime = Date.now();
+			this.startTime = Date.now();
+			this.count = to;
+			this.inTranstion = true;
+			this.isUpdated = true;
+		}
+	}, {
+		key: 'setSize',
+		value: function setSize(w, h) {
 
-	Renderer.prototype.setSize = function setSize(w, h) {
-
-		this.domElement.width = w;
-		this.domElement.height = h;
-		this.isUpdated = true;
-	};
-
-	// setEconomyMode ( state ) {
-
-	// 	// TODO
-	// 	// LINEAR_MIPMAP_LINEAR to low
-	// 	// lowFPS
-	// 	// and othres
-	// 	this.isEconomyMode = state;
-
-	// }
-
-	Renderer.prototype.tick = function tick() {
-
-		var next = 0;
-
-		if (this.isRunning) {
-
-			this.elapsedTime = Date.now() - this.startTime;
+			this.domElement.width = w;
+			this.domElement.height = h;
+			this.isUpdated = true;
 		}
 
-		if (this.interval + this.duration < this.elapsedTime) {
+		// setEconomyMode ( state ) {
 
-			next = this.getNext();
-			this.transition(next);
-			// transition start
+		// 	// TODO
+		// 	// LINEAR_MIPMAP_LINEAR to low
+		// 	// lowFPS
+		// 	// and othres
+		// 	this.isEconomyMode = state;
+
+		// }
+
+	}, {
+		key: 'tick',
+		value: function tick() {
+
+			var next = 0;
+
+			if (this.isRunning) {
+
+				this.elapsedTime = Date.now() - this.startTime;
+			}
+
+			if (this.interval + this.duration < this.elapsedTime) {
+
+				next = this.getNext();
+				this.transition(next);
+				// transition start
+			}
+
+			rAF(this.tick.bind(this));
+
+			if (this.isUpdated) {
+				this.render();
+			}
 		}
+	}, {
+		key: 'render',
+		value: function render() {}
+	}, {
+		key: 'play',
+		value: function play() {
 
-		rAF(this.tick.bind(this));
+			var pauseElapsedTime = 0;
 
-		if (this.isUpdated) {
-			this.render();
-		}
-	};
+			if (this.isRunning) {
+				return this;
+			}
 
-	Renderer.prototype.render = function render() {};
+			pauseElapsedTime = Date.now() - this.pauseStartTime;
+			this.startTime += pauseElapsedTime;
+			this.isRunning = true;
 
-	Renderer.prototype.play = function play() {
-
-		var pauseElapsedTime = 0;
-
-		if (this.isRunning) {
+			delete this._pauseStartTime;
 			return this;
 		}
+	}, {
+		key: 'pause',
+		value: function pause() {
 
-		pauseElapsedTime = Date.now() - this.pauseStartTime;
-		this.startTime += pauseElapsedTime;
-		this.isRunning = true;
+			if (!this.isRunning) {
+				return this;
+			}
 
-		delete this._pauseStartTime;
-		return this;
-	};
+			this.isRunning = false;
+			this.pauseStartTime = Date.now();
 
-	Renderer.prototype.pause = function pause() {
-
-		if (!this.isRunning) {
 			return this;
 		}
+	}, {
+		key: 'getCurrent',
+		value: function getCurrent() {
 
-		this.isRunning = false;
-		this.pauseStartTime = Date.now();
+			return this.count;
+		}
+	}, {
+		key: 'getNext',
+		value: function getNext() {
 
-		return this;
-	};
+			return this.count < this.images.length - 1 ? this.count + 1 : 0;
+		}
+	}, {
+		key: 'getPrev',
+		value: function getPrev() {
 
-	Renderer.prototype.getCurrent = function getCurrent() {
+			return this.count !== 0 ? this.count - 1 : this.images.length;
+		}
+	}, {
+		key: 'insert',
+		value: function insert(image, order) {
 
-		return this.count;
-	};
+			var src;
+			var onload = function (e) {
 
-	Renderer.prototype.getNext = function getNext() {
+				this.isUpdated = true;
+				e.target.removeEventListener('load', onload);
+			}.bind(this);
 
-		return this.count < this.images.length - 1 ? this.count + 1 : 0;
-	};
+			if (image instanceof Image) {
 
-	Renderer.prototype.getPrev = function getPrev() {
-
-		return this.count !== 0 ? this.count - 1 : this.images.length;
-	};
-
-	Renderer.prototype.insert = function insert(image, order) {
-
-		var src;
-
-		if (image instanceof Image) {
-
-			// nothing happens
-
-		} else if (typeof image === 'string') {
+				image.addEventListener('load', onload);
+			} else if (typeof image === 'string') {
 
 				src = image;
 				image = new Image();
+				image.addEventListener('load', onload);
 				image.src = src;
 			} else {
 
 				return;
 			}
 
-		this.images.splice(order, 0, image);
-	};
-
-	Renderer.prototype.remove = function remove(order) {
-
-		if (this.images.length === 1) {
-
-			return;
+			this.images.splice(order, 0, image);
 		}
+	}, {
+		key: 'remove',
+		value: function remove(order) {
 
-		this.images.splice(order, 1);
-	};
+			if (this.images.length === 1) {
+
+				return;
+			}
+
+			this.images.splice(order, 1);
+		}
+	}]);
 
 	return Renderer;
 }();
@@ -459,7 +495,11 @@ module.exports = exports['default'];
 },{}],5:[function(require,module,exports){
 'use strict';
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _EventDispatcher = require('./EventDispatcher.js');
 
@@ -495,66 +535,72 @@ var WebGLTexture = function () {
 		this.setImage(this.image);
 	}
 
-	WebGLTexture.prototype.isLoaded = function isLoaded() {
+	_createClass(WebGLTexture, [{
+		key: 'isLoaded',
+		value: function isLoaded() {
 
-		return this.image.naturalWidth !== 0;
-	};
-
-	WebGLTexture.prototype.onload = function onload() {
-
-		var onload = function () {
-
-			this.image.removeEventListener('load', onload);
-			this.setImage(this.image);
-		}.bind(this);
-
-		if (this.isLoaded()) {
-
-			this.setImage(this.image);
-			return;
+			return this.image.naturalWidth !== 0;
 		}
+	}, {
+		key: 'onload',
+		value: function onload() {
 
-		this.image.addEventListener('load', onload);
-	};
+			var onload = function () {
 
-	WebGLTexture.prototype.setImage = function setImage(image) {
+				this.image.removeEventListener('load', onload);
+				this.setImage(this.image);
+			}.bind(this);
 
-		var _gl = this.gl;
-		var _image;
+			if (this.isLoaded()) {
 
-		this.image = image;
+				this.setImage(this.image);
+				return;
+			}
 
-		if (this.isLoaded()) {
-
-			_image = this.image;
-		} else {
-
-			_image = defaultImage;
-			this.onload();
+			this.image.addEventListener('load', onload);
 		}
+	}, {
+		key: 'setImage',
+		value: function setImage(image) {
 
-		if (!_gl) {
+			var _gl = this.gl;
+			var _image;
+
+			this.image = image;
+
+			if (this.isLoaded()) {
+
+				_image = this.image;
+			} else {
+
+				_image = defaultImage;
+				this.onload();
+			}
+
+			if (!_gl) {
+
+				this.dispatchEvent({ type: 'updated' });
+				return;
+			}
+
+			_gl.bindTexture(_gl.TEXTURE_2D, this.texture);
+			_gl.pixelStorei(_gl.UNPACK_FLIP_Y_WEBGL, true);
+			_gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_MAG_FILTER, _gl.LINEAR);
+			_gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, _gl.LINEAR);
+			_gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_WRAP_S, _gl.CLAMP_TO_EDGE);
+			_gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_WRAP_T, _gl.CLAMP_TO_EDGE);
+			_gl.texImage2D(_gl.TEXTURE_2D, 0, _gl.RGBA, _gl.RGBA, _gl.UNSIGNED_BYTE, _image);
+			_gl.bindTexture(_gl.TEXTURE_2D, null);
 
 			this.dispatchEvent({ type: 'updated' });
-			return;
 		}
-
-		_gl.bindTexture(_gl.TEXTURE_2D, this.texture);
-		_gl.pixelStorei(_gl.UNPACK_FLIP_Y_WEBGL, true);
-		_gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_MAG_FILTER, _gl.LINEAR);
-		_gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, _gl.LINEAR);
-		_gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_WRAP_S, _gl.CLAMP_TO_EDGE);
-		_gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_WRAP_T, _gl.CLAMP_TO_EDGE);
-		_gl.texImage2D(_gl.TEXTURE_2D, 0, _gl.RGBA, _gl.RGBA, _gl.UNSIGNED_BYTE, _image);
-		_gl.bindTexture(_gl.TEXTURE_2D, null);
-
-		this.dispatchEvent({ type: 'updated' });
-	};
+	}]);
 
 	return WebGLTexture;
 }();
 
 exports.default = WebGLTexture;
+
 
 _EventDispatcher2.default.prototype.apply(WebGLTexture.prototype);
 module.exports = exports['default'];
@@ -562,7 +608,13 @@ module.exports = exports['default'];
 },{"./EventDispatcher.js":2}],6:[function(require,module,exports){
 'use strict';
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
 var _Renderer2 = require('./Renderer.js');
 
@@ -601,7 +653,7 @@ var WebGLRenderer = function (_Renderer) {
 	function WebGLRenderer(images, params) {
 		_classCallCheck(this, WebGLRenderer);
 
-		var _this = _possibleConstructorReturn(this, _Renderer.call(this, images, params));
+		var _this = _possibleConstructorReturn(this, (WebGLRenderer.__proto__ || Object.getPrototypeOf(WebGLRenderer)).call(this, images, params));
 
 		var that = _this;
 
@@ -619,175 +671,183 @@ var WebGLRenderer = function (_Renderer) {
 		return _this;
 	}
 
-	WebGLRenderer.prototype.setEffect = function setEffect(effectName, params) {
+	_createClass(WebGLRenderer, [{
+		key: 'setEffect',
+		value: function setEffect(effectName, params) {
 
-		var i = 0;
-		var position;
-		var FSSource = GLSlideshow.shaderLib[effectName].source;
-		var uniforms = GLSlideshow.shaderLib[effectName].uniforms;
+			var i = 0;
+			var position;
+			var FSSource = GLSlideshow.shaderLib[effectName].source;
+			var uniforms = GLSlideshow.shaderLib[effectName].uniforms;
 
-		if (this.program) {
+			if (this.program) {
 
-			this.gl.deleteTexture(this.from.texture);
-			this.gl.deleteTexture(this.to.texture);
-			this.gl.deleteBuffer(this.vertexBuffer);
-			this.gl.deleteShader(this.fragmentShader);
-			this.gl.deleteProgram(this.program);
-		}
-
-		this.fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
-		this.gl.shaderSource(this.fragmentShader, FSSource);
-		this.gl.compileShader(this.fragmentShader);
-
-		this.program = this.gl.createProgram();
-		this.gl.attachShader(this.program, this.vertexShader);
-		this.gl.attachShader(this.program, this.fragmentShader);
-		this.gl.linkProgram(this.program);
-		this.gl.useProgram(this.program);
-
-		this.vertexBuffer = this.gl.createBuffer();
-		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
-		this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0]), this.gl.STATIC_DRAW);
-
-		position = this.gl.getAttribLocation(this.program, 'position');
-		this.gl.vertexAttribPointer(position, 2, this.gl.FLOAT, false, 0, 0);
-		this.gl.enableVertexAttribArray(position);
-
-		this.uniforms = {
-			progress: this.gl.getUniformLocation(this.program, 'progress'),
-			resolution: this.gl.getUniformLocation(this.program, 'resolution'),
-			from: this.gl.getUniformLocation(this.program, 'from'),
-			to: this.gl.getUniformLocation(this.program, 'to')
-		};
-
-		for (i in uniforms) {
-
-			this.uniforms[i] = this.gl.getUniformLocation(this.program, i);
-			this.setUnifrom(i, uniforms[i].value, uniforms[i].type);
-		}
-
-		this.from = new _Texture2.default(this.images[this.count], this.gl);
-		this.to = new _Texture2.default(this.images[this.getNext()], this.gl);
-
-		this.from.addEventListener('updated', this.updateTexture.bind(this));
-		this.to.addEventListener('updated', this.updateTexture.bind(this));
-
-		this.setSize(this.resolution[0], this.resolution[1]);
-		this.updateTexture();
-	};
-
-	WebGLRenderer.prototype.setUnifrom = function setUnifrom(key, value, type) {
-
-		// TODO
-		var unifromLocation = this.gl.getUniformLocation(this.program, key);
-
-		if (type === 'float') {
-
-			this.gl.uniform1f(unifromLocation, value);
-		} else if (type === 'vec2') {
-
-			// this.gl.uniform2fv
-
-		}
-	};
-
-	WebGLRenderer.prototype.updateTexture = function updateTexture() {
-
-		this.gl.activeTexture(this.gl.TEXTURE0);
-		this.gl.bindTexture(this.gl.TEXTURE_2D, this.from.texture);
-		this.gl.uniform1i(this.uniforms.from, 0);
-
-		this.gl.activeTexture(this.gl.TEXTURE1);
-		this.gl.bindTexture(this.gl.TEXTURE_2D, this.to.texture);
-		this.gl.uniform1i(this.uniforms.to, 1);
-
-		this.isUpdated = true;
-	};
-
-	WebGLRenderer.prototype.setSize = function setSize(w, h) {
-
-		_Renderer.prototype.setSize.call(this, w, h);
-
-		this.glCanvas.width = w;
-		this.glCanvas.height = h;
-		this.resolution[0] = w;
-		this.resolution[1] = h;
-		this.gl.viewport(0, 0, w, h);
-		this.gl.uniform2fv(this.uniforms.resolution, this.resolution);
-		this.isUpdated = true;
-	};
-
-	WebGLRenderer.prototype.render = function render() {
-
-		var transitionElapsedTime = 0;
-		var progress = 1;
-
-		if (this.inTranstion) {
-
-			transitionElapsedTime = Date.now() - this.transitionStartTime;
-			progress = this.inTranstion ? Math.min(transitionElapsedTime / this.duration, 1) : 0;
-
-			// this.gl.clearColor( 0, 0, 0, 1 );
-			this.gl.uniform1f(this.uniforms.progress, progress);
-			this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-			this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
-			this.gl.flush();
-			this.context2d.drawImage(this.glCanvas, 0, 0);
-
-			if (progress === 1) {
-
-				this.context2d.drawImage(this.to.image, 0, 0, this.domElement.width, this.domElement.height);
-				this.inTranstion = false; // may move to tick()
-				this.isUpdated = false;
-				// transitionEnd!
+				this.gl.deleteTexture(this.from.texture);
+				this.gl.deleteTexture(this.to.texture);
+				this.gl.deleteBuffer(this.vertexBuffer);
+				this.gl.deleteShader(this.fragmentShader);
+				this.gl.deleteProgram(this.program);
 			}
-		} else {
+
+			this.fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
+			this.gl.shaderSource(this.fragmentShader, FSSource);
+			this.gl.compileShader(this.fragmentShader);
+
+			this.program = this.gl.createProgram();
+			this.gl.attachShader(this.program, this.vertexShader);
+			this.gl.attachShader(this.program, this.fragmentShader);
+			this.gl.linkProgram(this.program);
+			this.gl.useProgram(this.program);
+
+			this.vertexBuffer = this.gl.createBuffer();
+			this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
+			this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0]), this.gl.STATIC_DRAW);
+
+			position = this.gl.getAttribLocation(this.program, 'position');
+			this.gl.vertexAttribPointer(position, 2, this.gl.FLOAT, false, 0, 0);
+			this.gl.enableVertexAttribArray(position);
+
+			this.uniforms = {
+				progress: this.gl.getUniformLocation(this.program, 'progress'),
+				resolution: this.gl.getUniformLocation(this.program, 'resolution'),
+				from: this.gl.getUniformLocation(this.program, 'from'),
+				to: this.gl.getUniformLocation(this.program, 'to')
+			};
+
+			for (i in uniforms) {
+
+				this.uniforms[i] = this.gl.getUniformLocation(this.program, i);
+				this.setUnifrom(i, uniforms[i].value, uniforms[i].type);
+			}
+
+			this.from = new _Texture2.default(this.images[this.count], this.gl);
+			this.to = new _Texture2.default(this.images[this.getNext()], this.gl);
+
+			this.from.addEventListener('updated', this.updateTexture.bind(this));
+			this.to.addEventListener('updated', this.updateTexture.bind(this));
+
+			this.setSize(this.resolution[0], this.resolution[1]);
+			this.updateTexture();
+		}
+	}, {
+		key: 'setUnifrom',
+		value: function setUnifrom(key, value, type) {
+
+			// TODO
+			var unifromLocation = this.gl.getUniformLocation(this.program, key);
+
+			if (type === 'float') {
+
+				this.gl.uniform1f(unifromLocation, value);
+			} else if (type === 'vec2') {
+
+				// this.gl.uniform2fv
+
+			}
+		}
+	}, {
+		key: 'updateTexture',
+		value: function updateTexture() {
+
+			this.gl.activeTexture(this.gl.TEXTURE0);
+			this.gl.bindTexture(this.gl.TEXTURE_2D, this.from.texture);
+			this.gl.uniform1i(this.uniforms.from, 0);
+
+			this.gl.activeTexture(this.gl.TEXTURE1);
+			this.gl.bindTexture(this.gl.TEXTURE_2D, this.to.texture);
+			this.gl.uniform1i(this.uniforms.to, 1);
+
+			this.isUpdated = true;
+		}
+	}, {
+		key: 'setSize',
+		value: function setSize(w, h) {
+
+			_get(WebGLRenderer.prototype.__proto__ || Object.getPrototypeOf(WebGLRenderer.prototype), 'setSize', this).call(this, w, h);
+
+			this.glCanvas.width = w;
+			this.glCanvas.height = h;
+			this.resolution[0] = w;
+			this.resolution[1] = h;
+			this.gl.viewport(0, 0, w, h);
+			this.gl.uniform2fv(this.uniforms.resolution, this.resolution);
+			this.isUpdated = true;
+		}
+	}, {
+		key: 'render',
+		value: function render() {
+
+			var transitionElapsedTime = 0;
+			var progress = 1;
+
+			if (this.inTranstion) {
+
+				transitionElapsedTime = Date.now() - this.transitionStartTime;
+				progress = this.inTranstion ? Math.min(transitionElapsedTime / this.duration, 1) : 0;
+
+				// this.gl.clearColor( 0, 0, 0, 1 );
+				this.gl.uniform1f(this.uniforms.progress, progress);
+				this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+				this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+				this.gl.flush();
+				this.context2d.drawImage(this.glCanvas, 0, 0);
+
+				if (progress === 1) {
+
+					this.context2d.drawImage(this.to.image, 0, 0, this.domElement.width, this.domElement.height);
+					this.inTranstion = false; // may move to tick()
+					this.isUpdated = false;
+					// transitionEnd!
+				}
+			} else {
 
 				this.context2d.drawImage(this.images[this.count], 0, 0, this.domElement.width, this.domElement.height);
 				this.isUpdated = false;
 			}
-	};
-
-	WebGLRenderer.prototype.dispose = function dispose() {
-
-		this.isRunning = false;
-		this.inTranstion = false;
-
-		this.tick = function () {};
-
-		if (this.program) {
-
-			this.gl.activeTexture(this.gl.TEXTURE0);
-			this.gl.bindTexture(this.gl.TEXTURE_2D, null);
-			this.gl.activeTexture(this.gl.TEXTURE1);
-			this.gl.bindTexture(this.gl.TEXTURE_2D, null);
-			this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
-			// this.gl.bindBuffer( this.gl.ELEMENT_ARRAY_BUFFER, null );
-			// this.gl.bindRenderbuffer( this.gl.RENDERBUFFER, null );
-			// this.gl.bindFramebuffer( this.gl.FRAMEBUFFER, null );
-
-			this.gl.deleteTexture(this.from.texture);
-			this.gl.deleteTexture(this.to.texture);
-			this.gl.deleteBuffer(this.vertexBuffer);
-			// this.gl.deleteRenderbuffer( ... );
-			// this.gl.deleteFramebuffer( ... );
-			this.gl.deleteShader(this.vertexShader);
-			this.gl.deleteShader(this.fragmentShader);
-			this.gl.deleteProgram(this.program);
 		}
+	}, {
+		key: 'dispose',
+		value: function dispose() {
 
-		this.setSize(1, 1);
+			this.isRunning = false;
+			this.inTranstion = false;
 
-		if (!!this.domElement.parentNode) {
+			this.tick = function () {};
 
-			this.domElement.parentNode.removeChild(this.domElement);
+			if (this.program) {
+
+				this.gl.activeTexture(this.gl.TEXTURE0);
+				this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+				this.gl.activeTexture(this.gl.TEXTURE1);
+				this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+				this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
+				// this.gl.bindBuffer( this.gl.ELEMENT_ARRAY_BUFFER, null );
+				// this.gl.bindRenderbuffer( this.gl.RENDERBUFFER, null );
+				// this.gl.bindFramebuffer( this.gl.FRAMEBUFFER, null );
+
+				this.gl.deleteTexture(this.from.texture);
+				this.gl.deleteTexture(this.to.texture);
+				this.gl.deleteBuffer(this.vertexBuffer);
+				// this.gl.deleteRenderbuffer( ... );
+				// this.gl.deleteFramebuffer( ... );
+				this.gl.deleteShader(this.vertexShader);
+				this.gl.deleteShader(this.fragmentShader);
+				this.gl.deleteProgram(this.program);
+			}
+
+			this.setSize(1, 1);
+
+			if (!!this.domElement.parentNode) {
+
+				this.domElement.parentNode.removeChild(this.domElement);
+			}
+
+			delete this.from;
+			delete this.to;
+			delete this.domElement;
+			delete this.glCanvas;
 		}
-
-		delete this.from;
-		delete this.to;
-		delete this.domElement;
-		delete this.glCanvas;
-	};
+	}]);
 
 	return WebGLRenderer;
 }(_Renderer3.default);
@@ -798,7 +858,9 @@ module.exports = exports['default'];
 },{"./Renderer.js":4,"./Texture.js":5}],7:[function(require,module,exports){
 'use strict';
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
 exports.default = function (images, params) {
 
@@ -835,7 +897,9 @@ module.exports = exports['default'];
 },{"./CanvasRenderer.js":1,"./WebGLRenderer.js":6,"./utils.js":9}],8:[function(require,module,exports){
 'use strict';
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 exports.default = {
 
 	crossFade: {
@@ -908,7 +972,9 @@ module.exports = exports['default'];
 },{}],9:[function(require,module,exports){
 'use strict';
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 exports.default = {
 
 	hasCanvas: function () {
