@@ -162,15 +162,22 @@ export default class Renderer {
 	insert ( image, order ) {
 
 		var src;
+		var onload = function ( e ) {
+
+			this.isUpdated = true;
+			e.target.removeEventListener( 'load', onload );
+
+		}.bind( this );
 
 		if ( image instanceof Image ) {
 
-			// nothing happens
+			image.addEventListener( 'load', onload );
 
 		} else if ( typeof image === 'string' ) {
 
 			src = image;
 			image = new Image();
+			image.addEventListener( 'load', onload );
 			image.src = src;
 
 		} else {
