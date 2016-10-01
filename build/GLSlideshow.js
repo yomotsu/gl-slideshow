@@ -92,6 +92,7 @@ var CanvasRenderer = function (_Renderer) {
 					this.context2d.drawImage(this.to.image, 0, 0, width, height);
 					this.inTranstion = false; // may move to tick()
 					this.isUpdated = false;
+					this.dispatchEvent({ type: 'transitionEnd' });
 					// transitionEnd!
 				}
 			} else {
@@ -282,6 +283,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _EventDispatcher = require('./EventDispatcher.js');
+
+var _EventDispatcher2 = _interopRequireDefault(_EventDispatcher);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var rAF = function () {
@@ -351,6 +358,7 @@ var Renderer = function () {
 			this.count = to;
 			this.inTranstion = true;
 			this.isUpdated = true;
+			this.dispatchEvent({ type: 'transitionStart' });
 		}
 	}, {
 		key: 'setSize',
@@ -490,9 +498,12 @@ var Renderer = function () {
 }();
 
 exports.default = Renderer;
+
+
+_EventDispatcher2.default.prototype.apply(Renderer.prototype);
 module.exports = exports['default'];
 
-},{}],5:[function(require,module,exports){
+},{"./EventDispatcher.js":2}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -717,7 +728,7 @@ var WebGLRenderer = function (_Renderer) {
 			for (i in uniforms) {
 
 				this.uniforms[i] = this.gl.getUniformLocation(this.program, i);
-				this.setUnifrom(i, uniforms[i].value, uniforms[i].type);
+				this.setUniform(i, uniforms[i].value, uniforms[i].type);
 			}
 
 			this.from = new _Texture2.default(this.images[this.count], this.gl);
@@ -730,15 +741,15 @@ var WebGLRenderer = function (_Renderer) {
 			this.updateTexture();
 		}
 	}, {
-		key: 'setUnifrom',
-		value: function setUnifrom(key, value, type) {
+		key: 'setUniform',
+		value: function setUniform(key, value, type) {
 
 			// TODO
-			var unifromLocation = this.gl.getUniformLocation(this.program, key);
+			var uniformLocation = this.gl.getUniformLocation(this.program, key);
 
 			if (type === 'float') {
 
-				this.gl.uniform1f(unifromLocation, value);
+				this.gl.uniform1f(uniformLocation, value);
 			} else if (type === 'vec2') {
 
 				// this.gl.uniform2fv
@@ -797,6 +808,7 @@ var WebGLRenderer = function (_Renderer) {
 					this.context2d.drawImage(this.to.image, 0, 0, this.domElement.width, this.domElement.height);
 					this.inTranstion = false; // may move to tick()
 					this.isUpdated = false;
+					this.dispatchEvent({ type: 'transitionEnd' });
 					// transitionEnd!
 				}
 			} else {
