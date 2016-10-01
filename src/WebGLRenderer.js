@@ -94,7 +94,7 @@ export default class WebGLRenderer extends Renderer {
 		for ( i in uniforms ) {
 
 			this.uniforms[ i ] = this.gl.getUniformLocation( this.program, i );
-			this.setUnifrom(
+			this.setUniform(
 				i,
 				uniforms[ i ].value,
 				uniforms[ i ].type
@@ -113,14 +113,14 @@ export default class WebGLRenderer extends Renderer {
 
 	}
 
-	setUnifrom ( key, value, type ) {
+	setUniform ( key, value, type ) {
 
 		// TODO
-		var unifromLocation = this.gl.getUniformLocation( this.program, key );
+		var uniformLocation = this.gl.getUniformLocation( this.program, key );
 
 		if ( type === 'float' ) {
 
-			this.gl.uniform1f( unifromLocation, value );
+			this.gl.uniform1f( uniformLocation, value );
 
 		} else if ( type === 'vec2' ) {
 
