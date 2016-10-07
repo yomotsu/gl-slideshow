@@ -37,7 +37,7 @@ gulp.task( 'browserify', function () {
     standalone: 'GLSlideshow'
   } )
   .transform( babelify.configure( {
-    presets: [ 'es2015-loose' ],
+    presets: [ [ 'es2015', { 'loose' : true} ] ],
     plugins: [
       'add-module-exports',
       // for IE9
