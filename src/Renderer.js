@@ -51,7 +51,7 @@ export default class Renderer {
 		this.isUpdated = true;
 		this.domElement = params && params.canvas || document.createElement( 'canvas' );
 		this.images = [];
-console.log( this.domElement );
+
 		images.forEach( function ( image, i ) { this.insert( image, i ); }.bind( this ) );
 
 	}
