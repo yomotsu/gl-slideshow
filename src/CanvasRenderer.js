@@ -17,7 +17,7 @@ export default class CanvasRenderer extends Renderer {
 
 		super( images, params );
 
-		var that = this;
+		this.context = this.domElement.getContext( '2d' );
 
 		this.from = new Texture( this.images[ this.count ] );
 		this.to   = new Texture( this.images[ this.getNext() ] );
@@ -53,14 +53,14 @@ export default class CanvasRenderer extends Renderer {
 
 			if ( progress !== 1 ) {
 
-				this.context2d.drawImage( this.from.image, 0, 0, width, height );
-				this.context2d.globalAlpha = progress;
-				this.context2d.drawImage( this.to.image, 0, 0, width, height );
-				this.context2d.globalAlpha = 1;
+				this.context.drawImage( this.from.image, 0, 0, width, height );
+				this.context.globalAlpha = progress;
+				this.context.drawImage( this.to.image, 0, 0, width, height );
+				this.context.globalAlpha = 1;
 
 			} else {
 
-				this.context2d.drawImage( this.to.image, 0, 0, width, height );
+				this.context.drawImage( this.to.image, 0, 0, width, height );
 				this.inTranstion = false; // may move to tick()
 				this.isUpdated = false;
 				this.dispatchEvent( { type: 'transitionEnd' } );
@@ -70,7 +70,7 @@ export default class CanvasRenderer extends Renderer {
 
 		} else {
 
-			this.context2d.drawImage( this.images[ this.count ], 0, 0, width, height );
+			this.context.drawImage( this.images[ this.count ], 0, 0, width, height );
 			this.isUpdated = false;
 
 		}

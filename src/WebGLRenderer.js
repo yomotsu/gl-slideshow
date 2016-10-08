@@ -23,19 +23,16 @@ export default class WebGLRenderer extends Renderer {
 
 		super( images, params );
 
-		var that = this;
-
-		this.glCanvas = document.createElement( 'canvas' );
-		this.gl = this.glCanvas.getContext( 'webgl' ) ||
-		          this.glCanvas.getContext( 'experimental-webgl' );
+		this.context = this.domElement.getContext( 'webgl' ) ||
+		               this.domElement.getContext( 'experimental-webgl' );
 		this.resolution = new Float32Array( [
 			params && params.width  || this.domElement.width,
 			params && params.height || this.domElement.height
 		] );
 
-		this.vertexShader = this.gl.createShader( this.gl.VERTEX_SHADER );
-		this.gl.shaderSource( this.vertexShader, vertexShaderSource );
-		this.gl.compileShader( this.vertexShader );
+		this.vertexShader = this.context.createShader( this.context.VERTEX_SHADER );
+		this.context.shaderSource( this.vertexShader, vertexShaderSource );
+		this.context.compileShader( this.vertexShader );
 		this.setEffect( params && params.effect || 'crossFade' );
 
 		this.tick();
@@ -51,49 +48,49 @@ export default class WebGLRenderer extends Renderer {
 
 		if ( this.program ) {
 
-			this.gl.deleteTexture( this.from.texture );
-			this.gl.deleteTexture( this.to.texture );
-			this.gl.deleteBuffer( this.vertexBuffer );
-			this.gl.deleteShader( this.fragmentShader );
-			this.gl.deleteProgram( this.program );
+			this.context.deleteTexture( this.from.texture );
+			this.context.deleteTexture( this.to.texture );
+			this.context.deleteBuffer( this.vertexBuffer );
+			this.context.deleteShader( this.fragmentShader );
+			this.context.deleteProgram( this.program );
 
 		}
 
-		this.fragmentShader = this.gl.createShader( this.gl.FRAGMENT_SHADER );
-		this.gl.shaderSource( this.fragmentShader, FSSource );
-		this.gl.compileShader( this.fragmentShader );
+		this.fragmentShader = this.context.createShader( this.context.FRAGMENT_SHADER );
+		this.context.shaderSource( this.fragmentShader, FSSource );
+		this.context.compileShader( this.fragmentShader );
 
-		this.program = this.gl.createProgram();
-		this.gl.attachShader( this.program, this.vertexShader );
-		this.gl.attachShader( this.program, this.fragmentShader );
-		this.gl.linkProgram( this.program );
-		this.gl.useProgram( this.program );
+		this.program = this.context.createProgram();
+		this.context.attachShader( this.program, this.vertexShader );
+		this.context.attachShader( this.program, this.fragmentShader );
+		this.context.linkProgram( this.program );
+		this.context.useProgram( this.program );
 
-		this.vertexBuffer = this.gl.createBuffer();
-		this.gl.bindBuffer( this.gl.ARRAY_BUFFER, this.vertexBuffer );
-		this.gl.bufferData( this.gl.ARRAY_BUFFER, new Float32Array( [
+		this.vertexBuffer = this.context.createBuffer();
+		this.context.bindBuffer( this.context.ARRAY_BUFFER, this.vertexBuffer );
+		this.context.bufferData( this.context.ARRAY_BUFFER, new Float32Array( [
 			- 1.0, - 1.0,
 			  1.0, - 1.0,
 			- 1.0,   1.0,
 			  1.0, - 1.0,
 			  1.0,   1.0,
 			- 1.0,   1.0
-		] ), this.gl.STATIC_DRAW );
+		] ), this.context.STATIC_DRAW );
 
-		position = this.gl.getAttribLocation( this.program, 'position' );
-		this.gl.vertexAttribPointer( position, 2, this.gl.FLOAT, false, 0, 0 );
-		this.gl.enableVertexAttribArray( position );
+		position = this.context.getAttribLocation( this.program, 'position' );
+		this.context.vertexAttribPointer( position, 2, this.context.FLOAT, false, 0, 0 );
+		this.context.enableVertexAttribArray( position );
 
 		this.uniforms = {
-			progress  : this.gl.getUniformLocation( this.program, 'progress' ),
-			resolution: this.gl.getUniformLocation( this.program, 'resolution' ),
-			from      : this.gl.getUniformLocation( this.program, 'from' ),
-			to        : this.gl.getUniformLocation( this.program, 'to' )
+			progress  : this.context.getUniformLocation( this.program, 'progress' ),
+			resolution: this.context.getUniformLocation( this.program, 'resolution' ),
+			from      : this.context.getUniformLocation( this.program, 'from' ),
+			to        : this.context.getUniformLocation( this.program, 'to' )
 		};
 
 		for ( i in uniforms ) {
 
-			this.uniforms[ i ] = this.gl.getUniformLocation( this.program, i );
+			this.uniforms[ i ] = this.context.getUniformLocation( this.program, i );
 			this.setUniform(
 				i,
 				uniforms[ i ].value,
@@ -102,8 +99,8 @@ export default class WebGLRenderer extends Renderer {
 
 		}
 
-		this.from = new Texture( this.images[ this.count     ], this.gl );
-		this.to   = new Texture( this.images[ this.getNext() ], this.gl );
+		this.from = new Texture( this.images[ this.count     ], this.context );
+		this.to   = new Texture( this.images[ this.getNext() ], this.context );
 
 		this.from.addEventListener( 'updated', this.updateTexture.bind( this ) );
 		this.to.addEventListener  ( 'updated', this.updateTexture.bind( this ) );
@@ -116,15 +113,15 @@ export default class WebGLRenderer extends Renderer {
 	setUniform ( key, value, type ) {
 
 		// TODO
-		var uniformLocation = this.gl.getUniformLocation( this.program, key );
+		var uniformLocation = this.context.getUniformLocation( this.program, key );
 
 		if ( type === 'float' ) {
 
-			this.gl.uniform1f( uniformLocation, value );
+			this.context.uniform1f( uniformLocation, value );
 
 		} else if ( type === 'vec2' ) {
 
-			// this.gl.uniform2fv
+			// this.context.uniform2fv
 
 		}
 
@@ -132,13 +129,13 @@ export default class WebGLRenderer extends Renderer {
 
 	updateTexture () {
 
-		this.gl.activeTexture( this.gl.TEXTURE0 );
-		this.gl.bindTexture( this.gl.TEXTURE_2D, this.from.texture );
-		this.gl.uniform1i( this.uniforms.from, 0 );
+		this.context.activeTexture( this.context.TEXTURE0 );
+		this.context.bindTexture( this.context.TEXTURE_2D, this.from.texture );
+		this.context.uniform1i( this.uniforms.from, 0 );
 
-		this.gl.activeTexture( this.gl.TEXTURE1 );
-		this.gl.bindTexture( this.gl.TEXTURE_2D, this.to.texture );
-		this.gl.uniform1i( this.uniforms.to, 1 );
+		this.context.activeTexture( this.context.TEXTURE1 );
+		this.context.bindTexture( this.context.TEXTURE_2D, this.to.texture );
+		this.context.uniform1i( this.uniforms.to, 1 );
 
 		this.isUpdated = true;
 
@@ -148,12 +145,12 @@ export default class WebGLRenderer extends Renderer {
 
 		super.setSize( w, h );
 
-		this.glCanvas.width  = w;
-		this.glCanvas.height = h;
+		this.domElement.width  = w;
+		this.domElement.height = h;
 		this.resolution[ 0 ] = w;
 		this.resolution[ 1 ] = h;
-		this.gl.viewport( 0, 0, w, h );
-		this.gl.uniform2fv( this.uniforms.resolution, this.resolution );
+		this.context.viewport( 0, 0, w, h );
+		this.context.uniform2fv( this.uniforms.resolution, this.resolution );
 		this.isUpdated = true;
 
 	}
@@ -168,16 +165,14 @@ export default class WebGLRenderer extends Renderer {
 			transitionElapsedTime = Date.now() - this.transitionStartTime;
 			progress = this.inTranstion ? Math.min( transitionElapsedTime / this.duration, 1 ) : 0;
 
-			// this.gl.clearColor( 0, 0, 0, 1 );
-			this.gl.uniform1f( this.uniforms.progress, progress );
-			this.gl.clear( this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT );
-			this.gl.drawArrays( this.gl.TRIANGLES, 0, 6 );
-			this.gl.flush();
-			this.context2d.drawImage( this.glCanvas, 0, 0 );
+			// this.context.clearColor( 0, 0, 0, 1 );
+			this.context.uniform1f( this.uniforms.progress, progress );
+			this.context.clear( this.context.COLOR_BUFFER_BIT | this.context.DEPTH_BUFFER_BIT );
+			this.context.drawArrays( this.context.TRIANGLES, 0, 6 );
+			this.context.flush();
 
 			if ( progress === 1 ) {
 
-				this.context2d.drawImage( this.to.image, 0, 0, this.domElement.width, this.domElement.height );
 				this.inTranstion = false; // may move to tick()
 				this.isUpdated = false;
 				this.dispatchEvent( { type: 'transitionEnd' } );
@@ -187,7 +182,11 @@ export default class WebGLRenderer extends Renderer {
 
 		} else {
 
-			this.context2d.drawImage( this.images[ this.count ], 0, 0, this.domElement.width, this.domElement.height );
+			// this.context.clearColor( 0, 0, 0, 1 );
+			this.context.uniform1f( this.uniforms.progress, 0 );
+			this.context.clear( this.context.COLOR_BUFFER_BIT | this.context.DEPTH_BUFFER_BIT );
+			this.context.drawArrays( this.context.TRIANGLES, 0, 6 );
+			this.context.flush();
 			this.isUpdated = false;
 
 		}
@@ -203,23 +202,23 @@ export default class WebGLRenderer extends Renderer {
 
 		if ( this.program ) {
 
-			this.gl.activeTexture( this.gl.TEXTURE0 );
-			this.gl.bindTexture( this.gl.TEXTURE_2D, null );
-			this.gl.activeTexture( this.gl.TEXTURE1 );
-			this.gl.bindTexture( this.gl.TEXTURE_2D, null );
-			this.gl.bindBuffer( this.gl.ARRAY_BUFFER, null );
-			// this.gl.bindBuffer( this.gl.ELEMENT_ARRAY_BUFFER, null );
-			// this.gl.bindRenderbuffer( this.gl.RENDERBUFFER, null );
-			// this.gl.bindFramebuffer( this.gl.FRAMEBUFFER, null );
+			this.context.activeTexture( this.context.TEXTURE0 );
+			this.context.bindTexture( this.context.TEXTURE_2D, null );
+			this.context.activeTexture( this.context.TEXTURE1 );
+			this.context.bindTexture( this.context.TEXTURE_2D, null );
+			this.context.bindBuffer( this.context.ARRAY_BUFFER, null );
+			// this.context.bindBuffer( this.context.ELEMENT_ARRAY_BUFFER, null );
+			// this.context.bindRenderbuffer( this.context.RENDERBUFFER, null );
+			// this.context.bindFramebuffer( this.context.FRAMEBUFFER, null );
 
-			this.gl.deleteTexture( this.from.texture );
-			this.gl.deleteTexture( this.to.texture );
-			this.gl.deleteBuffer( this.vertexBuffer );
-			// this.gl.deleteRenderbuffer( ... );
-			// this.gl.deleteFramebuffer( ... );
-			this.gl.deleteShader( this.vertexShader );
-			this.gl.deleteShader( this.fragmentShader );
-			this.gl.deleteProgram( this.program );
+			this.context.deleteTexture( this.from.texture );
+			this.context.deleteTexture( this.to.texture );
+			this.context.deleteBuffer( this.vertexBuffer );
+			// this.context.deleteRenderbuffer( ... );
+			// this.context.deleteFramebuffer( ... );
+			this.context.deleteShader( this.vertexShader );
+			this.context.deleteShader( this.fragmentShader );
+			this.context.deleteProgram( this.program );
 
 		}
 
@@ -234,7 +233,6 @@ export default class WebGLRenderer extends Renderer {
 		delete this.from;
 		delete this.to;
 		delete this.domElement;
-		delete this.glCanvas;
 
 	}
 

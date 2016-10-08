@@ -41,8 +41,6 @@ export default class Renderer {
 
 	constructor ( images, params ) {
 
-		var that = this;
-
 		this.count = 0;
 		this.startTime = Date.now();
 		this.elapsedTime = 0;
@@ -52,10 +50,9 @@ export default class Renderer {
 		this.interval = Math.max( params && params.interval || 5000, this.duration );
 		this.isUpdated = true;
 		this.domElement = document.createElement( 'canvas' );
-		this.context2d = this.domElement.getContext( '2d' );
 		this.images = [];
 
-		images.forEach( function ( image, i ) { that.insert( image, i ); } );
+		images.forEach( function ( image, i ) { this.insert( image, i ); }.bind( this ) );
 
 	}
 
