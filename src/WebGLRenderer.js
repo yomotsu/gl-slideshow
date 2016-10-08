@@ -143,7 +143,16 @@ export default class WebGLRenderer extends Renderer {
 
 	setSize ( w, h ) {
 
-		super.setSize( w, h );
+		if (
+			this.domElement.width  === w &&
+			this.domElement.height === h &&
+			this.resolution[ 0 ] === w &&
+			this.resolution[ 1 ] === h 
+		) {
+
+			return;
+
+		}
 
 		this.domElement.width  = w;
 		this.domElement.height = h;

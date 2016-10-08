@@ -72,6 +72,15 @@ export default class Renderer {
 
 	setSize ( w, h ) {
 
+		if (
+			this.domElement.width  === w &&
+			this.domElement.height === h
+		) {
+
+			return;
+
+		}
+
 		this.domElement.width  = w;
 		this.domElement.height = h;
 		this.isUpdated = true;
