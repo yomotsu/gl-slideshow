@@ -112,21 +112,26 @@ For more detail, see [APIs example](http://yomotsu.github.io/GLSlideshow.js/exam
 - `instance.setSize( width, height )`
 - `instance.insert( image, order )`
 - `instance.remove( order )`
+- `instance.replace( images )`
 - `instance.transition( to )`
 - `instance.setEffect( effectName [, uniforms ] )`
 - `instance.dipose()`
 
-Also editable params
+Editable params
 
 - `instance.duration`
 - `instance.interval`
+
+Read only params
+
+- `instance.inTranstion`
 
 Events
 
 - `instance.addEventListener( 'transitionStart', function () { /* callback */ } );`
 - `instance.addEventListener( 'transitionEnd',   function () { /* callback */ } );`
 
-Plus static methods
+Static methods
 
 - `GLSlideshow.hasCanvas()`
 - `GLSlideshow.hasWebGL()`

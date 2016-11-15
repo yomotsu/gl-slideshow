@@ -210,6 +210,28 @@ export default class Renderer {
 
 	}
 
+	replace ( images ) {
+
+		var length = this.images.length;
+
+		images.forEach( function ( image ) {
+
+			slideshow.insert( image, this.images.length );
+
+		}.bind( this ) );
+
+
+		for ( let i = 0|0; i < length; i = ( i + 1 ) | 0 ) {
+
+			this.remove( 0 );
+
+		}
+
+		this.isUpdated = true;
+		this.transition( 0 );
+
+	}
+
 }
 
 EventDispatcher.prototype.apply( Renderer.prototype );
