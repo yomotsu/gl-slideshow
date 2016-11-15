@@ -34,6 +34,7 @@ export default class WebGLRenderer extends Renderer {
 		this.context.shaderSource( this.vertexShader, vertexShaderSource );
 		this.context.compileShader( this.vertexShader );
 		this.setEffect( params && params.effect || 'crossFade' );
+		this.progress = 0;
 
 		this.tick();
 
@@ -167,20 +168,19 @@ export default class WebGLRenderer extends Renderer {
 	render () {
 
 		var transitionElapsedTime = 0;
-		var progress = 1;
 
 		if ( this.inTranstion ) {
 
 			transitionElapsedTime = Date.now() - this.transitionStartTime;
-			progress = this.inTranstion ? Math.min( transitionElapsedTime / this.duration, 1 ) : 0;
+			this.progress = this.inTranstion ? Math.min( transitionElapsedTime / this.duration, 1 ) : 0;
 
 			// this.context.clearColor( 0, 0, 0, 1 );
-			this.context.uniform1f( this.uniforms.progress, progress );
+			this.context.uniform1f( this.uniforms.progress, this.progress );
 			this.context.clear( this.context.COLOR_BUFFER_BIT | this.context.DEPTH_BUFFER_BIT );
 			this.context.drawArrays( this.context.TRIANGLES, 0, 6 );
 			this.context.flush();
 
-			if ( progress === 1 ) {
+			if ( this.progress === 1 ) {
 
 				this.inTranstion = false; // may move to tick()
 				this.isUpdated = false;
@@ -192,7 +192,7 @@ export default class WebGLRenderer extends Renderer {
 		} else {
 
 			// this.context.clearColor( 0, 0, 0, 1 );
-			this.context.uniform1f( this.uniforms.progress, 0 );
+			this.context.uniform1f( this.uniforms.progress, this.progress );
 			this.context.clear( this.context.COLOR_BUFFER_BIT | this.context.DEPTH_BUFFER_BIT );
 			this.context.drawArrays( this.context.TRIANGLES, 0, 6 );
 			this.context.flush();
