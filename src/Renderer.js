@@ -41,6 +41,8 @@ export default class Renderer {
 
 	constructor ( images, params ) {
 
+		var that = this;
+
 		this.count = 0;
 		this.startTime = Date.now();
 		this.elapsedTime = 0;

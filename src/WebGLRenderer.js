@@ -106,6 +106,7 @@ export default class WebGLRenderer extends Renderer {
 		this.from.addEventListener( 'updated', this.updateTexture.bind( this ) );
 		this.to.addEventListener  ( 'updated', this.updateTexture.bind( this ) );
 
+		this.progress = 0;
 		this.setSize( this.resolution[ 0 ], this.resolution[ 1 ] );
 		this.updateTexture();
 
@@ -144,16 +145,7 @@ export default class WebGLRenderer extends Renderer {
 
 	setSize ( w, h ) {
 
-		if (
-			this.domElement.width  === w &&
-			this.domElement.height === h &&
-			this.resolution[ 0 ] === w &&
-			this.resolution[ 1 ] === h 
-		) {
-
-			return;
-
-		}
+		super.setSize( w, h );
 
 		this.domElement.width  = w;
 		this.domElement.height = h;
