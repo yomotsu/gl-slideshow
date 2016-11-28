@@ -94,6 +94,7 @@ Images must be hosted on the same domain or arrowed CORS.
 
 - `'crossFade'`
 - `'crossZoom'`
+- `'directionalWipe'`
 - `'cube'`
 - `'wind'`
 - `'ripple'`
