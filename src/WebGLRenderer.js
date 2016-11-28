@@ -40,7 +40,7 @@ export default class WebGLRenderer extends Renderer {
 
 	}
 
-	setEffect ( effectName, params ) {
+	setEffect ( effectName ) {
 
 		var i = 0;
 		var position;
@@ -123,7 +123,15 @@ export default class WebGLRenderer extends Renderer {
 
 		} else if ( type === 'vec2' ) {
 
-			// this.context.uniform2fv
+			this.context.uniform2f( uniformLocation, value[ 0 ], value[ 1 ] );
+
+		} else if ( type === 'vec3' ) {
+
+			this.context.uniform3f( uniformLocation, value[ 0 ], value[ 1 ], value[ 2 ] );
+
+		} else if ( type === 'vec4' ) {
+
+			this.context.uniform4f( uniformLocation, value[ 0 ], value[ 1 ], value[ 2 ], value[ 3 ] );
 
 		}
 
