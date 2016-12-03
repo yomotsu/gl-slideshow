@@ -41,15 +41,13 @@ export default class CanvasRenderer extends Renderer {
 
 	render () {
 
-		var transitionElapsedTime = 0;
-		var progress = 1;
-		var width  = this.domElement.width;
-		var height = this.domElement.height
+		const width  = this.domElement.width;
+		const height = this.domElement.height
 
 		if ( this.inTranstion ) {
 
-			transitionElapsedTime = Date.now() - this.transitionStartTime;
-			progress = this.inTranstion ? Math.min( transitionElapsedTime / this.duration, 1 ) : 0;
+			const transitionElapsedTime = Date.now() - this.transitionStartTime;
+			const progress = this.inTranstion ? Math.min( transitionElapsedTime / this.duration, 1 ) : 0;
 
 			if ( progress !== 1 ) {
 
@@ -82,7 +80,7 @@ export default class CanvasRenderer extends Renderer {
 		this.isRunning   = false;
 		this.inTranstion = false;
 
-		this.tick = function () {}
+		this.tick = () => {}
 
 		this.setSize( 1, 1 );
 

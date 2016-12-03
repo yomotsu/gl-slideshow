@@ -1,17 +1,17 @@
 export default {
 
-	hasCanvas: function () {
+	hasCanvas: ( () => {
 
-		var canvas = document.createElement( 'canvas' );
+		const canvas = document.createElement( 'canvas' );
 		return !!( canvas.getContext && canvas.getContext( '2d' ) );
 
-	}(),
+	} )(),
 
-	hasWebGL: function () {
+	hasWebGL: ( () => {
 
 		try{
 
-			var canvas = document.createElement( 'canvas' );
+			const canvas = document.createElement( 'canvas' );
 			return !! window.WebGLRenderingContext && !! (
 				canvas.getContext( 'webgl' ) ||
 				canvas.getContext( 'experimental-webgl' )
@@ -24,6 +24,6 @@ export default {
 
 		}
 
-	}()
+	} )()
 
 }

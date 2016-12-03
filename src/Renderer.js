@@ -1,8 +1,8 @@
 import EventDispatcher from './EventDispatcher.js';
 
-var rAF = function () {
+const rAF = function () {
 
-	var lastTime = 0;
+	let lastTime = 0;
 
 	if ( !!window.requestAnimationFrame ) {
 
@@ -12,10 +12,10 @@ var rAF = function () {
 
 		return function( callback, element ) {
 
-			var currTime = new Date().getTime();
-			var timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) );
-			var id = setTimeout(
-				function() { callback( currTime + timeToCall ); }, 
+			const currTime = new Date().getTime();
+			const timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) );
+			const id = setTimeout(
+				() => { callback( currTime + timeToCall ); }, 
 				timeToCall
 			);
 			lastTime = currTime + timeToCall;
@@ -41,8 +41,6 @@ export default class Renderer {
 
 	constructor ( images, params ) {
 
-		var that = this;
-
 		this.count = 0;
 		this.startTime = Date.now();
 		this.elapsedTime = 0;
@@ -54,7 +52,7 @@ export default class Renderer {
 		this.domElement = params && params.canvas || document.createElement( 'canvas' );
 		this.images = [];
 
-		images.forEach( function ( image, i ) { this.insert( image, i ); }.bind( this ) );
+		images.forEach( ( image, i ) => { this.insert( image, i ); } );
 
 	}
 
@@ -101,8 +99,6 @@ export default class Renderer {
 
 	tick () {
 
-		var next = 0;
-
 		if ( this.isRunning ) {
 
 			this.elapsedTime = Date.now() - this.startTime;
@@ -111,8 +107,7 @@ export default class Renderer {
 
 		if ( this.interval + this.duration < this.elapsedTime ) {
 
-			next = this.getNext();
-			this.transition( next );
+			this.transition( this.getNext() );
 			// transition start
 
 		}
@@ -127,11 +122,9 @@ export default class Renderer {
 
 	play () {
 
-		var pauseElapsedTime = 0;
-
 		if ( this.isRunning ) { return this; }
 
-		pauseElapsedTime = Date.now() - this.pauseStartTime;
+		const pauseElapsedTime = Date.now() - this.pauseStartTime;
 		this.startTime += pauseElapsedTime;
 		this.isRunning = true;
 
@@ -171,13 +164,12 @@ export default class Renderer {
 
 	insert ( image, order ) {
 
-		var src;
-		var onload = function ( e ) {
+		const onload = ( e ) => {
 
 			this.isUpdated = true;
 			e.target.removeEventListener( 'load', onload );
 
-		}.bind( this );
+		};
 
 		if ( image instanceof Image ) {
 
@@ -185,7 +177,7 @@ export default class Renderer {
 
 		} else if ( typeof image === 'string' ) {
 
-			src = image;
+			const src = image;
 			image = new Image();
 			image.addEventListener( 'load', onload );
 			image.src = src;
@@ -216,11 +208,11 @@ export default class Renderer {
 
 		var length = this.images.length;
 
-		images.forEach( function ( image ) {
+		images.forEach( ( image ) => {
 
 			slideshow.insert( image, this.images.length );
 
-		}.bind( this ) );
+		} );
 
 
 		for ( let i = 0|0; i < length; i = ( i + 1 ) | 0 ) {

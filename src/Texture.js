@@ -1,6 +1,6 @@
 import EventDispatcher from './EventDispatcher.js';
 
-var defaultImage = new Image();
+const defaultImage = new Image();
 defaultImage.src = 'data:image/gif;base64,R0lGODlhAgACAPAAAP///wAAACwAAAAAAgACAEACAoRRADs=';
 
 /**
@@ -36,12 +36,12 @@ export default class WebGLTexture {
 
 	onload () {
 
-		var onload = function () {
+		const onload = () => {
 
 			this.image.removeEventListener( 'load', onload );
 			this.setImage( this.image );
 
-		}.bind( this );
+		};
 
 		if ( this.isLoaded() ) {
 
@@ -56,8 +56,8 @@ export default class WebGLTexture {
 
 	setImage ( image ) {
 
-		var _gl = this.gl;
-		var _image;
+		const _gl = this.gl;
+		let _image;
 
 		this.image = image;
 

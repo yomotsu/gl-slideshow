@@ -1,7 +1,7 @@
 import Renderer from './Renderer.js';
 import Texture  from './Texture.js';
 
-var vertexShaderSource = `
+const vertexShaderSource = `
 attribute vec2 position;
 void main () { gl_Position = vec4( position, 1., 1. ); }
 `;
@@ -42,10 +42,10 @@ export default class WebGLRenderer extends Renderer {
 
 	setEffect ( effectName ) {
 
-		var i = 0;
-		var position;
-		var FSSource = GLSlideshow.shaderLib[ effectName ].source;
-		var uniforms = GLSlideshow.shaderLib[ effectName ].uniforms;
+		const FSSource = GLSlideshow.shaderLib[ effectName ].source;
+		const uniforms = GLSlideshow.shaderLib[ effectName ].uniforms;
+		let i = 0;
+		let position;
 
 		if ( this.program ) {
 
@@ -114,8 +114,7 @@ export default class WebGLRenderer extends Renderer {
 
 	setUniform ( key, value, type ) {
 
-		// TODO
-		var uniformLocation = this.context.getUniformLocation( this.program, key );
+		const uniformLocation = this.context.getUniformLocation( this.program, key );
 
 		if ( type === 'float' ) {
 
@@ -167,11 +166,9 @@ export default class WebGLRenderer extends Renderer {
 
 	render () {
 
-		var transitionElapsedTime = 0;
-
 		if ( this.inTranstion ) {
 
-			transitionElapsedTime = Date.now() - this.transitionStartTime;
+			const transitionElapsedTime = Date.now() - this.transitionStartTime;
 			this.progress = this.inTranstion ? Math.min( transitionElapsedTime / this.duration, 1 ) : 0;
 
 			// this.context.clearColor( 0, 0, 0, 1 );

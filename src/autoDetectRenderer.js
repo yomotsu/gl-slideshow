@@ -2,7 +2,7 @@ import utils           from './utils.js';
 import WebGLRenderer   from './WebGLRenderer.js';
 import CanvasRenderer  from './CanvasRenderer.js';
 
-export default function ( images, params ) {
+export default ( images, params ) => {
 
 	if ( !utils.hasCanvas ) {
 
