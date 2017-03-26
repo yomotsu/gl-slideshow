@@ -4,6 +4,11 @@ Advanced 2D slideshow with WebGL, that provides a variety of beautiful effects w
 
 Also, 2D Canvas fallback is available for WebGL disabled browsers such as IE9. (The canvas fallback only supports cross-fade)
 
+[![Latest NPM release](https://img.shields.io/npm/v/GLSlideshow.svg)](https://www.npmjs.com/package/GLSlideshow)
+![MIT License](https://img.shields.io/npm/l/GLSlideshow.svg)
+[![dependencies Status](https://david-dm.org/yomotsu/GLSlideshow/status.svg)](https://david-dm.org/yomotsu/GLSlideshow)
+[![dependencies Status](https://david-dm.org/yomotsu/GLSlideshow/status.svg)](https://david-dm.org/yomotsu/GLSlideshow)
+
 Shaders are forked from http://transitions.glsl.io/
 
 ## Examples
