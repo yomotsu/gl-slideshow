@@ -30,13 +30,13 @@ Copy GLSlideshow.js from /dist/GLSlideshow.js and place it in your project. Then
 ### with NPM
 
 ```
-$ npm install --save scramble-text
+$ npm install --save GLSlideshow
 ```
 
 then
 
 ```javascript
-import ScrambleText from 'scramble-text';
+import GLSlideshow from 'GLSlideshow';
 ```
 
 ### making GLSlideshow instance
