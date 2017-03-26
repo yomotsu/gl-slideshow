@@ -1,28 +1,27 @@
 {
-  "name": "GLSlideshow",
-  "version": "0.1.0",
-  "description": "GLSlideshow",
-  "main": "build/GLSlideshow.js",
-  "scripts": {
-    "start": "gulp"
-  },
+  "name": "scramble-text",
+  "version": "0.0.5",
   "author": "Yomotsu",
   "license": "MIT",
+  "main": "dist/GLSlideshow.js",
+  "repository": "yomotsu/GLSlideshow",
+  "jsnext:main": "dist/GLSlideshow.module.js",
+  "module": "dist/GLSlideshow.module.js",
   "devDependencies": {
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-plugin-transform-proto-to-assign": "^6.9.0",
-    "babel-preset-es2015": "^6.16.0",
-    "babelify": "^7.3.0",
-    "browser-sync": "^2.17.0",
-    "browserify": "^13.1.0",
-    "gulp": "^3.9.1",
-    "gulp-add-src": "^0.2.0",
-    "gulp-concat": "^2.6.0",
-    "gulp-plumber": "^1.1.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-streamify": "^1.0.2",
-    "gulp-uglify": "^2.0.0",
-    "run-sequence": "^1.2.2",
-    "vinyl-source-stream": "^1.1.0"
+    "babel-preset-env": "1.2.2",
+    "rollup": "^0.41.4",
+    "rollup-plugin-babel": "2.7.1",
+    "rollup-watch": "^3.2.2",
+    "uglify-js": "^2.6.0"
+  },
+  "scripts": {
+    "start": "npm run watch",
+    "watch": "rollup --config --watch",
+    "build": "rollup --config",
+    "release": "rollup --config && uglifyjs dist/GLSlideshow.js -cm --preamble \"/*!\n * @author yomotsu\n * GLSlideshow\n * https://github.com/yomotsu/GLSlideshow\n * Released under the MIT License.\n */\" > dist/GLSlideshow.min.js"
+  },
+  "engines": {
+    "node": "6.9.4",
+    "npm": "3.10.10"
   }
 }

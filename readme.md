@@ -1,25 +1,40 @@
 # GLSlideshow.js
 
-GLSlideshow.js is a JavaScript library for advanced 2D slideshow with WebGL, that provides a variety of beautiful effects with GLSL power!
+Advanced 2D slideshow with WebGL, that provides a variety of beautiful effects with GLSL power!
 
-Also, it supports fallback in 2D Canvas for WebGL disabled browsers such as IE9. (The canvas fallback only supports cross-fade)
+Also, 2D Canvas fallback is available for WebGL disabled browsers such as IE9. (The canvas fallback only supports cross-fade)
 
 Shaders are forked from http://transitions.glsl.io/
 
 ## Examples
 
 - [Basic](http://yomotsu.github.io/GLSlideshow.js/examples/basic.html)
-- [Responsive](http://yomotsu.github.io/GLSlideshow.js/examples/responsive.html)
 - [APIs](http://yomotsu.github.io/GLSlideshow.js/examples/apis.html)
+- [Responsive](http://yomotsu.github.io/GLSlideshow.js/examples/responsive.html)
 
-## How to use
+## Usage
 
-Load the js file in your HTML
+### Standalone
+
+Copy GLSlideshow.js from /dist/GLSlideshow.js and place it in your project. Then, Load the js file in your HTML
+
 ```html
-<script src="GLSlideshow.min.js"></script>
+<script src="./js/GLSlideshow.js"></script>
 ```
 
-Then make a slideshow instance.
+### with NPM
+
+```
+$ npm install --save scramble-text
+```
+
+then
+
+```javascript
+import ScrambleText from 'scramble-text';
+```
+
+### making GLSlideshow instance
 
 `autoDetectRenderer()` returns either WebGL slideshow instance for modern browsers, or Canvas slideshow instance for canvas available browsers as fallback.
 
