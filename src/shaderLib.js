@@ -108,7 +108,7 @@ void main() {
 		// by http://transitions.glsl.io/transition/90000743fedc953f11a4
 
 		uniforms: {
-			direction: { value: [ 1, -1 ], type: 'vec2' },
+			direction:  { value: [ 1, - 1 ], type: 'vec2' },
 			smoothness: { value: 0.4, type: 'float' }
 		},
 		source: `
@@ -534,4 +534,4 @@ void main()
 
 	}
 
-}
+};

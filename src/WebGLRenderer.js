@@ -1,5 +1,6 @@
 import Renderer from './Renderer.js';
 import Texture  from './Texture.js';
+import shaderLib from './shaderLib.js';
 
 const vertexShaderSource = `
 attribute vec2 position;
@@ -19,7 +20,7 @@ void main () { gl_Position = vec4( position, 1., 1. ); }
 
 export default class WebGLRenderer extends Renderer {
 
-	constructor ( images, params ) {
+	constructor( images, params ) {
 
 		super( images, params );
 
@@ -40,10 +41,10 @@ export default class WebGLRenderer extends Renderer {
 
 	}
 
-	setEffect ( effectName ) {
+	setEffect( effectName ) {
 
-		const FSSource = GLSlideshow.shaderLib[ effectName ].source;
-		const uniforms = GLSlideshow.shaderLib[ effectName ].uniforms;
+		const FSSource = shaderLib[ effectName ].source;
+		const uniforms = shaderLib[ effectName ].uniforms;
 		let i = 0;
 		let position;
 
@@ -112,7 +113,7 @@ export default class WebGLRenderer extends Renderer {
 
 	}
 
-	setUniform ( key, value, type ) {
+	setUniform( key, value, type ) {
 
 		const uniformLocation = this.context.getUniformLocation( this.program, key );
 
@@ -136,7 +137,7 @@ export default class WebGLRenderer extends Renderer {
 
 	}
 
-	updateTexture () {
+	updateTexture() {
 
 		this.context.activeTexture( this.context.TEXTURE0 );
 		this.context.bindTexture( this.context.TEXTURE_2D, this.from.texture );
@@ -150,7 +151,7 @@ export default class WebGLRenderer extends Renderer {
 
 	}
 
-	setSize ( w, h ) {
+	setSize( w, h ) {
 
 		super.setSize( w, h );
 
@@ -164,7 +165,7 @@ export default class WebGLRenderer extends Renderer {
 
 	}
 
-	render () {
+	render() {
 
 		if ( this.inTranstion ) {
 
@@ -199,12 +200,12 @@ export default class WebGLRenderer extends Renderer {
 
 	}
 
-	dispose () {
+	dispose() {
 
 		this.isRunning   = false;
 		this.inTranstion = false;
 
-		this.tick = function () {}
+		this.tick = () => {};
 
 		if ( this.program ) {
 
@@ -230,7 +231,7 @@ export default class WebGLRenderer extends Renderer {
 
 		this.setSize( 1, 1 );
 
-		if ( !!this.domElement.parentNode ) {
+		if ( !! this.domElement.parentNode ) {
 
 			this.domElement.parentNode.removeChild( this.domElement );
 

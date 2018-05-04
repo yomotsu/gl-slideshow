@@ -1,27 +1,16 @@
-/*!
- * @author mrdoob / http://mrdoob.com/
- */
+// based on https://github.com/mrdoob/eventdispatcher.js/
 
-var EventDispatcher = function () {}
+export default class EventDispatcher {
 
-EventDispatcher.prototype = {
+	constructor() {
 
-	constructor: EventDispatcher,
+		this._listeners = {}
 
-	apply: function ( object ) {
+	}
 
-		object.addEventListener = EventDispatcher.prototype.addEventListener;
-		object.hasEventListener = EventDispatcher.prototype.hasEventListener;
-		object.removeEventListener = EventDispatcher.prototype.removeEventListener;
-		object.dispatchEvent = EventDispatcher.prototype.dispatchEvent;
+	addEventListener( type, listener ) {
 
-	},
-
-	addEventListener: function ( type, listener ) {
-
-		if ( this._listeners === undefined ) this._listeners = {};
-
-		var listeners = this._listeners;
+		const listeners = this._listeners;
 
 		if ( listeners[ type ] === undefined ) {
 
@@ -35,34 +24,24 @@ EventDispatcher.prototype = {
 
 		}
 
-	},
+	}
 
-	hasEventListener: function ( type, listener ) {
+	hasEventListener( type, listener ) {
 
-		if ( this._listeners === undefined ) return false;
+		const listeners = this._listeners;
 
-		var listeners = this._listeners;
+		return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
 
-		if ( listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1 ) {
+	}
 
-			return true;
+	removeEventListener( type, listener ) {
 
-		}
-
-		return false;
-
-	},
-
-	removeEventListener: function ( type, listener ) {
-
-		if ( this._listeners === undefined ) return;
-
-		var listeners = this._listeners;
-		var listenerArray = listeners[ type ];
+		const listeners = this._listeners;
+		const listenerArray = listeners[ type ];
 
 		if ( listenerArray !== undefined ) {
 
-			var index = listenerArray.indexOf( listener );
+			const index = listenerArray.indexOf( listener );
 
 			if ( index !== - 1 ) {
 
@@ -72,29 +51,20 @@ EventDispatcher.prototype = {
 
 		}
 
-	},
+	}
 
-	dispatchEvent: function ( event ) {
-			
-		if ( this._listeners === undefined ) return;
+	dispatchEvent( event ) {
 
-		var listeners = this._listeners;
-		var listenerArray = listeners[ event.type ];
+		const listeners = this._listeners;
+		const listenerArray = listeners[ event.type ];
 
 		if ( listenerArray !== undefined ) {
 
 			event.target = this;
 
-			var array = [];
-			var length = listenerArray.length;
+			const array = listenerArray.slice( 0 );
 
-			for ( var i = 0; i < length; i ++ ) {
-
-				array[ i ] = listenerArray[ i ];
-
-			}
-
-			for ( var i = 0; i < length; i ++ ) {
+			for ( let i = 0, l = array.length; i < l; i ++ ) {
 
 				array[ i ].call( this, event );
 
@@ -104,6 +74,4 @@ EventDispatcher.prototype = {
 
 	}
 
-};
-
-export default EventDispatcher;
+}

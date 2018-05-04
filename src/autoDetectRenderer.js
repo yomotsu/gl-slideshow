@@ -4,14 +4,14 @@ import CanvasRenderer  from './CanvasRenderer.js';
 
 export default ( images, params ) => {
 
-	if ( !utils.hasCanvas ) {
+	if ( ! utils.hasCanvas ) {
 
 		// your browser is not available both canvas and webgl
 		return;
 
 	}
 
-	if ( !utils.hasWebGL ) {
+	if ( ! utils.hasWebGL ) {
 
 		return new CanvasRenderer( images, params );
 
@@ -19,4 +19,4 @@ export default ( images, params ) => {
 
 	return new WebGLRenderer( images, params );
 
-}
+};

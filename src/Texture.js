@@ -11,30 +11,32 @@ defaultImage.src = 'data:image/gif;base64,R0lGODlhAgACAPAAAP///wAAACwAAAAAAgACAE
  * @param {WebGLRenderingContext} gl
  */
 
-export default class WebGLTexture {
+export default class WebGLTexture extends EventDispatcher {
 
-	constructor ( image, gl ) {
+	constructor( image, gl ) {
+
+		super();
 
 		this.image = image;
 
-		if ( !!gl && gl instanceof WebGLRenderingContext ) {
+		if ( !! gl && gl instanceof WebGLRenderingContext ) {
 
 			this.gl = gl;
 			this.texture = gl.createTexture();
 
-		};
+		}
 
-		this.setImage( this.image );
+		this.onload()
 
 	}
 
-	isLoaded () {
+	isLoaded() {
 
 		return this.image.naturalWidth !== 0;
 
 	}
 
-	onload () {
+	onload() {
 
 		const onload = () => {
 
@@ -54,7 +56,7 @@ export default class WebGLTexture {
 
 	}
 
-	setImage ( image ) {
+	setImage( image ) {
 
 		const _gl = this.gl;
 		let _image;
@@ -72,7 +74,7 @@ export default class WebGLTexture {
 
 		}
 
-		if ( !_gl ) {
+		if ( ! _gl ) {
 
 			this.dispatchEvent( { type: 'updated' } );
 			return;
@@ -93,5 +95,3 @@ export default class WebGLTexture {
 	}
 
 }
-
-EventDispatcher.prototype.apply( WebGLTexture.prototype );

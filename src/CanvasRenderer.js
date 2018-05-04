@@ -13,7 +13,7 @@ import Texture  from './Texture.js';
 
 export default class CanvasRenderer extends Renderer {
 
-	constructor ( images, params ) {
+	constructor( images, params ) {
 
 		super( images, params );
 
@@ -21,28 +21,28 @@ export default class CanvasRenderer extends Renderer {
 
 		this.from = new Texture( this.images[ this.count ] );
 		this.to   = new Texture( this.images[ this.getNext() ] );
-		
+
 		this.from.addEventListener( 'updated', this.updateTexture.bind( this ) );
-		this.to.addEventListener  ( 'updated', this.updateTexture.bind( this ) );
+		this.to.addEventListener( 'updated', this.updateTexture.bind( this ) );
 
 		this.setSize(
 			params.width  || this.domElement.width,
 			params.height || this.domElement.height
-		)
+		);
 		this.tick();
 
 	}
 
-	updateTexture () {
+	updateTexture() {
 
 		this.isUpdated = true;
 
 	}
 
-	render () {
+	render() {
 
 		const width  = this.domElement.width;
-		const height = this.domElement.height
+		const height = this.domElement.height;
 
 		if ( this.inTranstion ) {
 
@@ -75,16 +75,16 @@ export default class CanvasRenderer extends Renderer {
 
 	}
 
-	dispose () {
+	dispose() {
 
 		this.isRunning   = false;
 		this.inTranstion = false;
 
-		this.tick = () => {}
+		this.tick = () => {};
 
 		this.setSize( 1, 1 );
 
-		if ( !!this.domElement.parentNode ) {
+		if ( !! this.domElement.parentNode ) {
 
 			this.domElement.parentNode.removeChild( this.domElement );
 

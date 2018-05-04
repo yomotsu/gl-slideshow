@@ -4,18 +4,22 @@ const rAF = function () {
 
 	let lastTime = 0;
 
-	if ( !!window.requestAnimationFrame ) {
+	if ( !! window.requestAnimationFrame ) {
 
 		return window.requestAnimationFrame;
 
 	} else {
 
-		return function( callback, element ) {
+		return function ( callback ) {
 
 			const currTime = new Date().getTime();
 			const timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) );
 			const id = setTimeout(
-				() => { callback( currTime + timeToCall ); }, 
+				() => {
+
+					callback( currTime + timeToCall );
+
+				},
 				timeToCall
 			);
 			lastTime = currTime + timeToCall;
@@ -37,9 +41,11 @@ const rAF = function () {
  * @param {Number} params.height
  */
 
-export default class Renderer {
+export default class Renderer extends EventDispatcher {
 
-	constructor ( images, params ) {
+	constructor( images, params ) {
+
+		super();
 
 		this.count = 0;
 		this.startTime = Date.now();
@@ -52,11 +58,11 @@ export default class Renderer {
 		this.domElement = params && params.canvas || document.createElement( 'canvas' );
 		this.images = [];
 
-		images.forEach( ( image, i ) => { this.insert( image, i ); } );
+		images.forEach( ( image, i ) => this.insert( image, i ) );
 
 	}
 
-	transition ( to ) {
+	transition( to ) {
 
 		this.from.setImage( this.images[ this.count ] );
 		this.to.setImage( this.images[ to ] );
@@ -70,7 +76,7 @@ export default class Renderer {
 
 	}
 
-	setSize ( w, h ) {
+	setSize( w, h ) {
 
 		if (
 			this.domElement.width  === w &&
@@ -97,7 +103,7 @@ export default class Renderer {
 
 	// }
 
-	tick () {
+	tick() {
 
 		if ( this.isRunning ) {
 
@@ -114,15 +120,15 @@ export default class Renderer {
 
 		rAF( this.tick.bind( this ) );
 
-		if ( this.isUpdated ) { this.render(); }
+		if ( this.isUpdated ) this.render();
 
 	}
 
-	render () {}
+	render() {}
 
-	play () {
+	play() {
 
-		if ( this.isRunning ) { return this; }
+		if ( this.isRunning ) return this;
 
 		const pauseElapsedTime = Date.now() - this.pauseStartTime;
 		this.startTime += pauseElapsedTime;
@@ -133,9 +139,9 @@ export default class Renderer {
 
 	}
 
-	pause () {
+	pause() {
 
-		if ( !this.isRunning ) { return this; }
+		if ( ! this.isRunning ) return this;
 
 		this.isRunning = false;
 		this.pauseStartTime = Date.now();
@@ -144,30 +150,30 @@ export default class Renderer {
 
 	}
 
-	getCurrent () {
+	getCurrent() {
 
 		return this.count;
 
 	}
 
-	getNext () {
+	getNext() {
 
 		return ( this.count < this.images.length - 1 ) ? this.count + 1 : 0;
 
 	}
 
-	getPrev () {
+	getPrev() {
 
 		return ( this.count !== 0 ) ? this.count - 1 : this.images.length;
 
 	}
 
-	insert ( image, order ) {
+	insert( image, order ) {
 
-		const onload = ( e ) => {
+		const onload = ( event ) => {
 
 			this.isUpdated = true;
-			e.target.removeEventListener( 'load', onload );
+			event.target.removeEventListener( 'load', onload );
 
 		};
 
@@ -192,7 +198,7 @@ export default class Renderer {
 
 	}
 
-	remove ( order ) {
+	remove( order ) {
 
 		if ( this.images.length === 1 ) {
 
@@ -204,18 +210,17 @@ export default class Renderer {
 
 	}
 
-	replace ( images ) {
+	replace( images ) {
 
 		var length = this.images.length;
 
 		images.forEach( ( image ) => {
 
-			slideshow.insert( image, this.images.length );
+			this.insert( image, this.images.length );
 
 		} );
 
-
-		for ( let i = 0|0; i < length; i = ( i + 1 ) | 0 ) {
+		for ( let i = 0 | 0; i < length; i = ( i + 1 ) | 0 ) {
 
 			this.remove( 0 );
 
@@ -227,5 +232,3 @@ export default class Renderer {
 	}
 
 }
-
-EventDispatcher.prototype.apply( Renderer.prototype );

@@ -3,13 +3,13 @@ export default {
 	hasCanvas: ( () => {
 
 		const canvas = document.createElement( 'canvas' );
-		return !!( canvas.getContext && canvas.getContext( '2d' ) );
+		return !! ( canvas.getContext && canvas.getContext( '2d' ) );
 
 	} )(),
 
 	hasWebGL: ( () => {
 
-		try{
+		try {
 
 			const canvas = document.createElement( 'canvas' );
 			return !! window.WebGLRenderingContext && !! (
@@ -26,4 +26,4 @@ export default {
 
 	} )()
 
-}
+};

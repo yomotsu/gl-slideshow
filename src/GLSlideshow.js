@@ -5,12 +5,10 @@ import autoDetectRenderer from './autoDetectRenderer.js';
 import shaderLib          from './shaderLib.js';
 
 export default {
-
-	hasCanvas:          utils.hasCanvas,
-	hasWebGL:           utils.hasWebGL,
-	autoDetectRenderer: autoDetectRenderer,
-	WebGLRenderer:      WebGLRenderer,
-	CanvasRenderer:     CanvasRenderer,
-	shaderLib:          shaderLib
-
-}
+	hasCanvas: utils.hasCanvas,
+	hasWebGL: utils.hasWebGL,
+	autoDetectRenderer,
+	WebGLRenderer,
+	CanvasRenderer,
+	shaderLib,
+};
