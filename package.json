@@ -4,22 +4,27 @@
   "author": "Yomotsu",
   "license": "MIT",
   "main": "dist/GLSlideshow.js",
-  "repository": "yomotsu/GLSlideshow",
+  "repository": "yomotsu/GLSlideshow.js",
   "jsnext:main": "dist/GLSlideshow.module.js",
   "module": "dist/GLSlideshow.module.js",
   "devDependencies": {
-    "babel-preset-env": "1.2.2",
-    "rollup": "^0.41.4",
-    "rollup-plugin-babel": "2.7.1",
-    "rollup-watch": "^3.2.2",
-    "uglify-js": "^2.6.0"
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "1.6.1",
+    "rollup": "^0.58.2",
+    "rollup-plugin-babel": "3.0.4",
+    "rollup-watch": "^4.3.1",
+    "uglify-js": "^3.3.23"
   },
   "scripts": {
-    "start": "npm run watch",
+    "dev": "npm run watch",
     "watch": "rollup --config --watch",
     "build": "rollup --config",
     "release": "rollup --config && uglifyjs dist/GLSlideshow.js -cm --preamble \"/*!\n * @author yomotsu\n * GLSlideshow\n * https://github.com/yomotsu/GLSlideshow\n * Released under the MIT License.\n */\" > dist/GLSlideshow.min.js"
   },
+  "browserslist": [
+    "last 2 versions",
+    "ie >= 9"
+  ],
   "engines": {
     "node": "6.9.4",
     "npm": "3.10.10"

@@ -8,36 +8,23 @@ const license = `/*!
  */`
 
 export default {
-	entry: 'src/GLSlideshow.js',
-	indent: '\t',
+	input: 'src/GLSlideshow.js',
 	sourceMap: false,
 	plugins: [
-		babel( {
-			exclude: 'node_modules/**',
-			presets: [
-				[ 'env', {
-					targets: {
-						browsers: [
-							'last 2 versions',
-							'ie >= 11'
-						]
-					},
-					loose: true,
-					modules: false
-				} ]
-			]
-		} )
+		babel( { exclude: 'node_modules/**' } )
 	],
-	targets: [
+	output: [
 		{
 			format: 'umd',
-			moduleName: 'GLSlideshow',
-			dest: 'dist/GLSlideshow.js',
+			name: 'GLSlideshow',
+			file: 'dist/GLSlideshow.js',
+			indent: '\t',
 			banner: license
 		},
 		{
 			format: 'es',
-			dest: 'dist/GLSlideshow.module.js',
+			file: 'dist/GLSlideshow.module.js',
+			indent: '\t',
 			banner: license
 		}
 	]
