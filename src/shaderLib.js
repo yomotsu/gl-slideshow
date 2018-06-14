@@ -1,4 +1,8 @@
-export default {
+const head = `
+varying vec2 vUv;
+`;
+
+const shaders = {
 
 	crossFade: {
 
@@ -7,16 +11,17 @@ export default {
 #ifdef GL_ES
 precision highp float;
 #endif
+
+${ head }
 uniform sampler2D from, to;
 uniform float progress;
 uniform vec2 resolution;
 
 void main() {
-	vec2 p = gl_FragCoord.xy / resolution.xy;
+	// vec2 p = gl_FragCoord.xy / resolution.xy;
 	// gl_FragColor =texture2D( from, p );
 	// gl_FragColor=texture2D( to, p );
-	gl_FragColor = mix( texture2D( from, p ), texture2D( to, p ), progress );
-
+	gl_FragColor = mix( texture2D( from, vUv ), texture2D( to, vUv ), progress );
 }
 `
 
@@ -37,6 +42,8 @@ void main() {
 #ifdef GL_ES
 precision highp float;
 #endif
+
+${ head }
 uniform sampler2D from, to;
 uniform float progress;
 uniform vec2 resolution;
@@ -75,7 +82,8 @@ vec3 crossFade(in vec2 uv, in float dissolve) {
 }
 
 void main() {
-	vec2 texCoord = gl_FragCoord.xy / resolution.xy;
+	// vec2 texCoord = gl_FragCoord.xy / resolution.xy;
+	vec2 texCoord = vUv; // changed
 
 	// Linear interpolate center across center half of the image
 	vec2 center = vec2(Linear_ease(0.25, 0.5, 1.0, progress), 0.5);
@@ -115,20 +123,22 @@ void main() {
 #ifdef GL_ES
 precision highp float;
 #endif
- 
+
 // General parameters
+${ head }
 uniform sampler2D from;
 uniform sampler2D to;
 uniform float progress;
 uniform vec2 resolution;
- 
+
 uniform vec2 direction;
 uniform float smoothness;
- 
+
 const vec2 center = vec2(0.5, 0.5);
- 
+
 void main() {
-  vec2 p = gl_FragCoord.xy / resolution.xy;
+	// vec2 p = gl_FragCoord.xy / resolution.xy;
+	vec2 p = vUv; // changed
   vec2 v = normalize(direction);
   v /= abs(v.x)+abs(v.y);
   float d = v.x * center.x + v.y * center.y;
@@ -153,6 +163,8 @@ void main() {
 #ifdef GL_ES
 precision highp float;
 #endif
+
+${ head }
 uniform sampler2D from, to;
 uniform float progress;
 uniform vec2 resolution;
@@ -199,7 +211,8 @@ vec2 xskew (vec2 p, float persp, float center) {
 }
 
 void main() {
-	vec2 op = gl_FragCoord.xy / resolution.xy;
+	// vec2 op = gl_FragCoord.xy / resolution.xy;
+	vec2 op = vUv; // changed
 	float uz = unzoom * 2.0*(0.5-distance(0.5, progress));
 	vec2 p = -uz*0.5+(1.0+uz) * op;
 	vec2 fromP = xskew(
@@ -239,6 +252,7 @@ precision highp float;
 #endif
 
 // General parameters
+${ head }
 uniform sampler2D from;
 uniform sampler2D to;
 uniform float progress;
@@ -252,7 +266,8 @@ float rand (vec2 co) {
 }
 
 void main() {
-	vec2 p = gl_FragCoord.xy / resolution.xy;
+	// vec2 p = gl_FragCoord.xy / resolution.xy;
+	vec2 p = vUv; // changed
 	float r = rand(vec2(0, p.y));
 	float m = smoothstep(0.0, -size, p.x*(1.0-size) + size*r - (progress * (1.0 + size)));
 	gl_FragColor = mix(texture2D(from, p), texture2D(to, p), m);
@@ -275,6 +290,7 @@ precision highp float;
 #endif
 
 // General parameters
+${ head }
 uniform sampler2D from;
 uniform sampler2D to;
 uniform float progress;
@@ -289,7 +305,8 @@ void main()
 	vec2 dir = p - vec2(.5);
 	float dist = length(dir);
 	vec2 offset = dir * (sin(progress * dist * amplitude - progress * speed) + .5) / 30.;
-	gl_FragColor = mix(texture2D(from, p + offset), texture2D(to, p), smoothstep(0.2, 1.0, progress));
+	// gl_FragColor = mix(texture2D(from, p + offset), texture2D(to, p), smoothstep(0.2, 1.0, progress));
+	gl_FragColor = mix(texture2D(from, vUv + offset), texture2D(to, vUv), smoothstep(0.2, 1.0, progress)); //changed
 }
 `
 
@@ -304,6 +321,7 @@ void main()
 #ifdef GL_ES
 precision highp float;
 #endif
+${ head }
 uniform sampler2D from, to;
 uniform float progress;
 uniform vec2 resolution;
@@ -447,16 +465,17 @@ vec4 behindSurface(float yc, vec3 point, mat3 rrotation)
 	{
 		shado = 0.0;
 	}
-	
-	vec2 texCoord = gl_FragCoord.xy / resolution.xy;
+
+	vec2 texCoord = vUv;
 
 	return vec4(texture2D(to, texCoord).rgb - shado, 1.0);
 }
 
 void main()
 {
-	vec2 texCoord = gl_FragCoord.xy / resolution.xy;
-	
+	// vec2 texCoord = gl_FragCoord.xy / resolution.xy;
+	vec2 texCoord = vUv;
+
 	const float angle = 30.0 * PI / 180.0;
 	float c = cos(-angle);
 	float s = sin(-angle);
@@ -535,3 +554,19 @@ void main()
 	}
 
 };
+
+
+export function getShader( effectName ) {
+
+	return shaders[ effectName ];
+
+}
+
+export function addShader( effectName, source, uniforms ) {
+
+	shaders[ effectName ] = {
+		uniforms,
+		source,
+	};
+
+}

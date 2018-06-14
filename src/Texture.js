@@ -26,7 +26,7 @@ export default class WebGLTexture extends EventDispatcher {
 
 		}
 
-		this.onload()
+		this.onload();
 
 	}
 

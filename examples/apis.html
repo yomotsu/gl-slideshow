@@ -111,16 +111,6 @@ document.getElementById( 'slideshow-placeholder' ).appendChild( slideshow.domEle
 	</div>
 
 	<div class="doc__item">
-		<pre><code>instance.insert( 'img/extra.png', 3 );</code></pre>
-		<button onclick="slideshow.insert( 'img/extra.png', 3 );">run</button>
-	</div>
-
-	<div class="doc__item">
-		<pre><code>instance.remove( 0 );</code></pre>
-		<button onclick="slideshow.remove( 0 );">run</button>
-	</div>
-
-	<div class="doc__item">
 		<pre><code>instance.transition( 1 );</code></pre>
 		<button onclick="slideshow.transition( 1 );">run</button>
 	</div>
@@ -128,6 +118,11 @@ document.getElementById( 'slideshow-placeholder' ).appendChild( slideshow.domEle
 	<div class="doc__item">
 		<pre><code>instance.insert( 'img/extra.png', 3 );</code></pre>
 		<button onclick="slideshow.insert( 'img/extra.png', 3 );">run</button>
+	</div>
+
+	<div class="doc__item">
+		<pre><code>instance.remove( 0 );</code></pre>
+		<button onclick="slideshow.remove( 0 );">run</button>
 	</div>
 
 	<div class="doc__item">
@@ -139,8 +134,8 @@ document.getElementById( 'slideshow-placeholder' ).appendChild( slideshow.domEle
 <script>
 size.addEventListener( 'change', function () {
 	slideshow.setSize(
-		+this.value.split(',')[ 0 ],
-		+this.value.split(',')[ 1 ]
+		+ this.value.split( ',' )[ 0 ],
+		+ this.value.split( ',' )[ 1 ]
 	);
 } );
 </script>

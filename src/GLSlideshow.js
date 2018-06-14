@@ -2,7 +2,7 @@ import utils              from './utils.js';
 import WebGLRenderer      from './WebGLRenderer.js';
 import CanvasRenderer     from './CanvasRenderer.js';
 import autoDetectRenderer from './autoDetectRenderer.js';
-import shaderLib          from './shaderLib.js';
+import { addShader }      from './shaderLib.js';
 
 export default {
 	hasCanvas: utils.hasCanvas,
@@ -10,5 +10,5 @@ export default {
 	autoDetectRenderer,
 	WebGLRenderer,
 	CanvasRenderer,
-	shaderLib,
+	addShader,
 };
