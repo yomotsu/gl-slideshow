@@ -1,10 +1,35 @@
 import Renderer from './Renderer.js';
 import Texture  from './Texture.js';
-import shaderLib from './shaderLib.js';
+import { getShader } from './shaderLib.js';
 
 const vertexShaderSource = `
 attribute vec2 position;
-void main () { gl_Position = vec4( position, 1., 1. ); }
+attribute vec2 uv;
+varying vec2 vUv;
+void main() {
+	gl_Position = vec4( position, 1., 1. );
+	vUv = uv;
+}
+`;
+
+const fragmentShaderSourceHead = `
+precision highp float;
+varying vec2 vUv;
+uniform float progress, ratio;
+uniform vec2 resolution;
+uniform sampler2D from, to;
+vec4 getFromColor( vec2 uv ) {
+	return texture2D(from, uv);
+}
+vec4 getToColor( vec2 uv ) {
+	return texture2D(to, uv);
+}
+`;
+
+const fragmentShaderSourceFoot = `
+void main(){
+	gl_FragColor=transition(vUv);
+}
 `;
 
 /**
@@ -20,21 +45,23 @@ void main () { gl_Position = vec4( position, 1., 1. ); }
 
 export default class WebGLRenderer extends Renderer {
 
-	constructor( images, params ) {
+	constructor( images, params = {} ) {
 
 		super( images, params );
 
 		this.context = this.domElement.getContext( 'webgl' ) ||
-		               this.domElement.getContext( 'experimental-webgl' );
+									 this.domElement.getContext( 'experimental-webgl' );
+
 		this.resolution = new Float32Array( [
-			params && params.width  || this.domElement.width,
-			params && params.height || this.domElement.height
+			params.width || this.domElement.width,
+			params.height || this.domElement.height
 		] );
+		this.imageAspect = params.imageAspect || this.resolution[ 0 ] / this.resolution[ 1 ];
 
 		this.vertexShader = this.context.createShader( this.context.VERTEX_SHADER );
 		this.context.shaderSource( this.vertexShader, vertexShaderSource );
 		this.context.compileShader( this.vertexShader );
-		this.setEffect( params && params.effect || 'crossFade' );
+		this.setEffect( params.effect || 'crossFade' );
 		this.progress = 0;
 
 		this.tick();
@@ -43,10 +70,13 @@ export default class WebGLRenderer extends Renderer {
 
 	setEffect( effectName ) {
 
-		const FSSource = shaderLib[ effectName ].source;
-		const uniforms = shaderLib[ effectName ].uniforms;
+		const shader = getShader( effectName );
+		const FSSource =
+			fragmentShaderSourceHead +
+			shader.source +
+			fragmentShaderSourceFoot;
+		const uniforms = shader.uniforms;
 		let i = 0;
-		let position;
 
 		if ( this.program ) {
 
@@ -68,26 +98,47 @@ export default class WebGLRenderer extends Renderer {
 		this.context.linkProgram( this.program );
 		this.context.useProgram( this.program );
 
+		const canvasAspect = this.resolution[ 0 ] / this.resolution[ 1 ];
+		const aspect = this.imageAspect / canvasAspect;
+		const posX = aspect < 1 ? 1.0 : aspect;
+		const posY = aspect > 1 ? 1.0 : canvasAspect / this.imageAspect;
+
 		this.vertexBuffer = this.context.createBuffer();
 		this.context.bindBuffer( this.context.ARRAY_BUFFER, this.vertexBuffer );
 		this.context.bufferData( this.context.ARRAY_BUFFER, new Float32Array( [
-			- 1.0, - 1.0,
-			  1.0, - 1.0,
-			- 1.0,   1.0,
-			  1.0, - 1.0,
-			  1.0,   1.0,
-			- 1.0,   1.0
+			- posX, - posY,
+			  posX, - posY,
+			- posX,   posY,
+			  posX, - posY,
+			  posX,   posY,
+			- posX,   posY
 		] ), this.context.STATIC_DRAW );
 
-		position = this.context.getAttribLocation( this.program, 'position' );
+		const position = this.context.getAttribLocation( this.program, 'position' );
 		this.context.vertexAttribPointer( position, 2, this.context.FLOAT, false, 0, 0 );
 		this.context.enableVertexAttribArray( position );
 
+		// uv attr
+		this.uvBuffer = this.context.createBuffer();
+		this.context.bindBuffer( this.context.ARRAY_BUFFER, this.uvBuffer );
+		this.context.bufferData( this.context.ARRAY_BUFFER, new Float32Array( [
+			0.0, 0.0,
+			1.0, 0.0,
+			0.0, 1.0,
+			1.0, 0.0,
+			1.0, 1.0,
+			0.0, 1.0
+		] ), this.context.STATIC_DRAW );
+
+		const uv = this.context.getAttribLocation( this.program, 'uv' );
+		this.context.vertexAttribPointer( uv, 2, this.context.FLOAT, false, 0, 0 );
+		this.context.enableVertexAttribArray( uv );
+
 		this.uniforms = {
-			progress  : this.context.getUniformLocation( this.program, 'progress' ),
-			resolution: this.context.getUniformLocation( this.program, 'resolution' ),
-			from      : this.context.getUniformLocation( this.program, 'from' ),
-			to        : this.context.getUniformLocation( this.program, 'to' )
+			progress   : this.context.getUniformLocation( this.program, 'progress' ),
+			resolution : this.context.getUniformLocation( this.program, 'resolution' ),
+			from       : this.context.getUniformLocation( this.program, 'from' ),
+			to         : this.context.getUniformLocation( this.program, 'to' )
 		};
 
 		for ( i in uniforms ) {
@@ -105,7 +156,7 @@ export default class WebGLRenderer extends Renderer {
 		this.to   = new Texture( this.images[ this.getNext() ], this.context );
 
 		this.from.addEventListener( 'updated', this.updateTexture.bind( this ) );
-		this.to.addEventListener  ( 'updated', this.updateTexture.bind( this ) );
+		this.to.addEventListener( 'updated', this.updateTexture.bind( this ) );
 
 		this.progress = 0;
 		this.setSize( this.resolution[ 0 ], this.resolution[ 1 ] );
@@ -161,6 +212,23 @@ export default class WebGLRenderer extends Renderer {
 		this.resolution[ 1 ] = h;
 		this.context.viewport( 0, 0, w, h );
 		this.context.uniform2fv( this.uniforms.resolution, this.resolution );
+
+		// update vertex buffer
+		const canvasAspect = this.resolution[ 0 ] / this.resolution[ 1 ];
+		const aspect = this.imageAspect / canvasAspect;
+		const posX = aspect < 1 ? 1.0 : aspect;
+		const posY = aspect > 1 ? 1.0 : canvasAspect / this.imageAspect;
+
+		this.context.bindBuffer( this.context.ARRAY_BUFFER, this.vertexBuffer );
+		this.context.bufferData( this.context.ARRAY_BUFFER, new Float32Array( [
+			- posX, - posY,
+			  posX, - posY,
+			- posX,   posY,
+			  posX, - posY,
+			  posX,   posY,
+			- posX,   posY
+		] ), this.context.STATIC_DRAW );
+
 		this.isUpdated = true;
 
 	}
@@ -206,6 +274,7 @@ export default class WebGLRenderer extends Renderer {
 		this.inTranstion = false;
 
 		this.tick = () => {};
+		this.setSize( 1, 1 );
 
 		if ( this.program ) {
 
@@ -228,8 +297,6 @@ export default class WebGLRenderer extends Renderer {
 			this.context.deleteProgram( this.program );
 
 		}
-
-		this.setSize( 1, 1 );
 
 		if ( !! this.domElement.parentNode ) {
 

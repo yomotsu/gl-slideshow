@@ -16,6 +16,7 @@ Shaders are forked from http://transitions.glsl.io/
 - [Basic](http://yomotsu.github.io/GLSlideshow.js/examples/basic.html)
 - [APIs](http://yomotsu.github.io/GLSlideshow.js/examples/apis.html)
 - [Responsive](http://yomotsu.github.io/GLSlideshow.js/examples/responsive.html)
+- [Custom shader](http://yomotsu.github.io/GLSlideshow.js/examples/shader.html)
 
 ## Usage
 
@@ -115,7 +116,6 @@ Images must be hosted on the same domain or arrowed CORS.
 - `'crossFade'`
 - `'crossZoom'`
 - `'directionalWipe'`
-- `'cube'`
 - `'wind'`
 - `'ripple'`
 - `'pageCurl'`
@@ -156,3 +156,4 @@ Static methods
 
 - `GLSlideshow.hasCanvas()`
 - `GLSlideshow.hasWebGL()`
+- `GLSlideshow.addShader( 'shaderName', shaderSource, uniforms )`

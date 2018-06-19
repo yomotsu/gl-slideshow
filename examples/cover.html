@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>=^.^=</title>
+</head>
+<body>
+<div>
+	<a href="https://github.com/yomotsu/GLSlideshow.js">GitHub repo</a><br>
+	try to resize the browser window.
+</div>
+<div id="slideshow-placeholder"></div>
+
+<script src="../dist/GLSlideshow.js"></script>
+<script>
+var imageWidth  = 1024;
+var imageHeight = 576;
+var imageAspect = imageWidth / imageHeight;
+var slideshow = GLSlideshow.autoDetectRenderer(
+	[ './img/1.jpg', './img/3.jpg', './img/4.jpg' ],
+	{
+		width: document.body.clientWidth, // optional
+		height: 400,             // optional
+		imageAspect: imageAspect,// optional. the param to be "cover"
+		duration: 1000,          // optional
+		interval: 4000,          // optional
+		// effect: 'crossFade'      // optional
+		effect: 'pageCurl'      // optional
+	}
+);
+
+document.getElementById( 'slideshow-placeholder' ).appendChild( slideshow.domElement );
+
+// should be throttled for better perfomance
+window.addEventListener( 'resize', function() {
+
+	const width = document.body.clientWidth;
+	const height = 400;
+	slideshow.setSize( width, height );
+
+} );
+</script>
+
+</body>
+</html>

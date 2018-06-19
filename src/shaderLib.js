@@ -1,47 +1,31 @@
-export default {
+// https://gl-transitions.com/
+const head = '';
+
+const shaders = {
 
 	crossFade: {
-
 		uniforms: {},
 		source: `
-#ifdef GL_ES
-precision highp float;
-#endif
-uniform sampler2D from, to;
-uniform float progress;
-uniform vec2 resolution;
-
-void main() {
-	vec2 p = gl_FragCoord.xy / resolution.xy;
-	// gl_FragColor =texture2D( from, p );
-	// gl_FragColor=texture2D( to, p );
-	gl_FragColor = mix( texture2D( from, p ), texture2D( to, p ), progress );
-
-}
-`
-
+vec4 transition (vec2 uv) {
+	return mix( texture2D( from, v ), texture2D( to, v ), progress );;
+}`
 	},
 
 	crossZoom: {
-
-		// by http://transitions.glsl.io/transition/b86b90161503a0023231
-
+		// by https://gl-transitions.com/editor/crosszoom
 		uniforms: {
 			strength: { value: 0.4, type: 'float' }
 		},
 		source: `
+// License: MIT
+// Author: rectalogic
+// ported by gre from https://gist.github.com/rectalogic/b86b90161503a0023231
+
 // Converted from https://github.com/rectalogic/rendermix-basic-effects/blob/master/assets/com/rendermix/CrossZoom/CrossZoom.frag
 // Which is based on https://github.com/evanw/glfx.js/blob/master/src/filters/blur/zoomblur.js
 // With additional easing functions from https://github.com/rectalogic/rendermix-basic-effects/blob/master/assets/com/rendermix/Easing/Easing.glsllib
 
-#ifdef GL_ES
-precision highp float;
-#endif
-uniform sampler2D from, to;
-uniform float progress;
-uniform vec2 resolution;
-
-uniform float strength;
+uniform float strength; // = 0.4
 
 const float PI = 3.141592653589793;
 
@@ -64,18 +48,16 @@ float Sinusoidal_easeInOut(in float begin, in float change, in float duration, i
 	return -change / 2.0 * (cos(PI * time / duration) - 1.0) + begin;
 }
 
-/* random number between 0 and 1 */
-float random(in vec3 scale, in float seed) {
-	/* use the fragment position for randomness */
-	return fract(sin(dot(gl_FragCoord.xyz + seed, scale)) * 43758.5453 + seed);
+float rand (vec2 co) {
+	return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
 vec3 crossFade(in vec2 uv, in float dissolve) {
-	return mix(texture2D(from, uv).rgb, texture2D(to, uv).rgb, dissolve);
+	return mix(getFromColor(uv).rgb, getToColor(uv).rgb, dissolve);
 }
 
-void main() {
-	vec2 texCoord = gl_FragCoord.xy / resolution.xy;
+vec4 transition(vec2 uv) {
+	vec2 texCoord = uv.xy / vec2(1.0).xy;
 
 	// Linear interpolate center across center half of the image
 	vec2 center = vec2(Linear_ease(0.25, 0.5, 1.0, progress), 0.5);
@@ -89,7 +71,7 @@ void main() {
 	vec2 toCenter = center - texCoord;
 
 	/* randomize the lookup values to hide the fixed number of samples */
-	float offset = random(vec3(12.9898, 78.233, 151.7182), 0.0);
+	float offset = rand(uv);
 
 	for (float t = 0.0; t <= 40.0; t++) {
 		float percent = (t + offset) / 40.0;
@@ -97,217 +79,97 @@ void main() {
 		color += crossFade(texCoord + toCenter * percent * strength, dissolve) * weight;
 		total += weight;
 	}
-	gl_FragColor = vec4(color / total, 1.0);
+	return vec4(color / total, 1.0);
 }
 `
-
 	},
 
 	directionalWipe: {
-
-		// by http://transitions.glsl.io/transition/90000743fedc953f11a4
-
+		// by https://gl-transitions.com/editor/directionalwipe
 		uniforms: {
 			direction:  { value: [ 1, - 1 ], type: 'vec2' },
 			smoothness: { value: 0.4, type: 'float' }
 		},
 		source: `
-#ifdef GL_ES
-precision highp float;
-#endif
- 
-// General parameters
-uniform sampler2D from;
-uniform sampler2D to;
-uniform float progress;
-uniform vec2 resolution;
- 
-uniform vec2 direction;
-uniform float smoothness;
- 
+// Author: gre
+// License: MIT
+
+uniform vec2 direction; // = vec2(1.0, -1.0)
+uniform float smoothness; // = 0.5
+
 const vec2 center = vec2(0.5, 0.5);
- 
-void main() {
-  vec2 p = gl_FragCoord.xy / resolution.xy;
-  vec2 v = normalize(direction);
-  v /= abs(v.x)+abs(v.y);
-  float d = v.x * center.x + v.y * center.y;
-  float m = smoothstep(-smoothness, 0.0, v.x * p.x + v.y * p.y - (d-0.5+progress*(1.+smoothness)));
-  gl_FragColor = mix(texture2D(to, p), texture2D(from, p), m);
+
+vec4 transition (vec2 uv) {
+	vec2 v = normalize(direction);
+	v /= abs(v.x)+abs(v.y);
+	float d = v.x * center.x + v.y * center.y;
+	float m =
+		(1.0-step(progress, 0.0)) * // there is something wrong with our formula that makes m not equals 0.0 with progress is 0.0
+		(1.0 - smoothstep(-smoothness, 0.0, v.x * uv.x + v.y * uv.y - (d-0.5+progress*(1.+smoothness))));
+	return mix(getFromColor(uv), getToColor(uv), m);
 }
 `
-
-	},
-
-	cube: {
-
-		// by http://transitions.glsl.io/transition/ee15128c2b87d0e74dee
-
-		uniforms: {
-			persp:      { value: 0.7, type: 'float' },
-			unzoom:     { value: 0.3, type: 'float' },
-			reflection: { value: 0.4, type: 'float' },
-			floating:   { value: 3,   type: 'float' }
-		},
-		source: `
-#ifdef GL_ES
-precision highp float;
-#endif
-uniform sampler2D from, to;
-uniform float progress;
-uniform vec2 resolution;
-
-uniform float persp;
-uniform float unzoom;
-uniform float reflection;
-uniform float floating;
-
-vec2 project (vec2 p) {
-	return p * vec2(1.0, -1.2) + vec2(0.0, -floating/100.);
-}
-
-bool inBounds (vec2 p) {
-	return all(lessThan(vec2(0.0), p)) && all(lessThan(p, vec2(1.0)));
-}
-
-vec4 bgColor (vec2 p, vec2 pfr, vec2 pto) {
-	vec4 c = vec4(0.0, 0.0, 0.0, 1.0);
-	pfr = project(pfr);
-	if (inBounds(pfr)) {
-		c += mix(vec4(0.0), texture2D(from, pfr), reflection * mix(1.0, 0.0, pfr.y));
-	}
-	pto = project(pto);
-	if (inBounds(pto)) {
-		c += mix(vec4(0.0), texture2D(to, pto), reflection * mix(1.0, 0.0, pto.y));
-	}
-	return c;
-}
-
-// p : the position
-// persp : the perspective in [ 0, 1 ]
-// center : the xcenter in [0, 1] \ 0.5 excluded
-vec2 xskew (vec2 p, float persp, float center) {
-	float x = mix(p.x, 1.0-p.x, center);
-	return (
-		(
-			vec2( x, (p.y - 0.5*(1.0-persp) * x) / (1.0+(persp-1.0)*x) )
-			- vec2(0.5-distance(center, 0.5), 0.0)
-		)
-		* vec2(0.5 / distance(center, 0.5) * (center<0.5 ? 1.0 : -1.0), 1.0)
-		+ vec2(center<0.5 ? 0.0 : 1.0, 0.0)
-	);
-}
-
-void main() {
-	vec2 op = gl_FragCoord.xy / resolution.xy;
-	float uz = unzoom * 2.0*(0.5-distance(0.5, progress));
-	vec2 p = -uz*0.5+(1.0+uz) * op;
-	vec2 fromP = xskew(
-		(p - vec2(progress, 0.0)) / vec2(1.0-progress, 1.0),
-		1.0-mix(progress, 0.0, persp),
-		0.0
-	);
-	vec2 toP = xskew(
-		p / vec2(progress, 1.0),
-		mix(pow(progress, 2.0), 1.0, persp),
-		1.0
-	);
-	if (inBounds(fromP)) {
-		gl_FragColor = texture2D(from, fromP);
-	}
-	else if (inBounds(toP)) {
-		gl_FragColor = texture2D(to, toP);
-	}
-	else {
-		gl_FragColor = bgColor(op, fromP, toP);
-	}
-}
-`
-
 	},
 
 	wind: {
-
 		// by http://transitions.glsl.io/transition/7de3f4b9482d2b0bf7bb
-
 		uniforms: {
 			size: { value: 0.2, type: 'float' }
 		},
 		source: `
-#ifdef GL_ES
-precision highp float;
-#endif
-
-// General parameters
-uniform sampler2D from;
-uniform sampler2D to;
-uniform float progress;
-uniform vec2 resolution;
+// Author: gre
+// License: MIT
 
 // Custom parameters
-uniform float size;
+uniform float size; // = 0.2
 
 float rand (vec2 co) {
 	return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
-void main() {
-	vec2 p = gl_FragCoord.xy / resolution.xy;
-	float r = rand(vec2(0, p.y));
-	float m = smoothstep(0.0, -size, p.x*(1.0-size) + size*r - (progress * (1.0 + size)));
-	gl_FragColor = mix(texture2D(from, p), texture2D(to, p), m);
+vec4 transition (vec2 uv) {
+	float r = rand(vec2(0, uv.y));
+	float m = smoothstep(0.0, -size, uv.x*(1.0-size) + size*r - (progress * (1.0 + size)));
+	return mix(
+		getFromColor(uv),
+		getToColor(uv),
+		m
+	);
 }
 `
-
 	},
 
 	ripple: {
-
-		// by http://transitions.glsl.io/transition/94ffa2725b65aa8b9979
-
+		// by https://gl-transitions.com/editor/ripple
 		uniforms: {
 			amplitude: { value: 100, type: 'float' },
 			speed:     { value: 50,  type: 'float' }
 		},
 		source: `
-#ifdef GL_ES
-precision highp float;
-#endif
+// Author: gre
+// License: MIT
+uniform float amplitude; // = 100.0
+uniform float speed; // = 50.0
 
-// General parameters
-uniform sampler2D from;
-uniform sampler2D to;
-uniform float progress;
-uniform vec2 resolution;
-
-uniform float amplitude;
-uniform float speed;
-
-void main()
-{
-	vec2 p = gl_FragCoord.xy / resolution.xy;
-	vec2 dir = p - vec2(.5);
+vec4 transition (vec2 uv) {
+	vec2 dir = uv - vec2(.5);
 	float dist = length(dir);
 	vec2 offset = dir * (sin(progress * dist * amplitude - progress * speed) + .5) / 30.;
-	gl_FragColor = mix(texture2D(from, p + offset), texture2D(to, p), smoothstep(0.2, 1.0, progress));
+	return mix(
+		getFromColor(uv + offset),
+		getToColor(uv),
+		smoothstep(0.2, 1.0, progress)
+	);
 }
 `
 
 	},
-
 	pageCurl: {
-
 		// by http://transitions.glsl.io/transition/166e496a19a4fdbf1aae
-
 		uniforms: {},
 		source: `
-#ifdef GL_ES
-precision highp float;
-#endif
-uniform sampler2D from, to;
-uniform float progress;
-uniform vec2 resolution;
-
+// author: Hewlett-Packard
+// license: BSD 3 Clause
 // Adapted by Sergey Kosarevsky from:
 // http://rectalogic.github.io/webvfx/examples_2transition-shader-pagecurl_8html-example.html
 
@@ -318,15 +180,15 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-   * Redistributions of source code must retain the above copyright
-     notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-     copyright notice, this list of conditions and the following disclaimer
-     in the documentation and/or other materials provided with the
-     distribution.
-   * Neither the name of Hewlett-Packard nor the names of its
-     contributors may be used to endorse or promote products derived from
-     this software without specific prior written permission.
+	* Redistributions of source code must retain the above copyright
+		notice, this list of conditions and the following disclaimer.
+	* Redistributions in binary form must reproduce the above
+		copyright notice, this list of conditions and the following disclaimer
+		in the documentation and/or other materials provided with the
+		distribution.
+	* Neither the name of Hewlett-Packard nor the names of its
+		contributors may be used to endorse or promote products derived from
+		this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -391,13 +253,12 @@ vec4 seeThrough(float yc, vec2 p, mat3 rotation, mat3 rrotation)
 	vec3 point = hitPoint(hitAngle, yc, rotation * vec3(p, 1.0), rrotation);
 	if (yc <= 0.0 && (point.x < 0.0 || point.y < 0.0 || point.x > 1.0 || point.y > 1.0))
 	{
-	  vec2 texCoord = gl_FragCoord.xy / resolution.xy;
-		return texture2D(to, texCoord);
+		return getToColor(p);
 	}
 
-	if (yc > 0.0) return texture2D(from, p);
+	if (yc > 0.0) return getFromColor(p);
 
-	vec4 color = texture2D(from, point.xy);
+	vec4 color = getFromColor(point.xy);
 	vec4 tcolor = vec4(0.0);
 
 	return antiAlias(color, tcolor, distanceToEdge(point));
@@ -420,14 +281,14 @@ vec4 seeThroughWithShadow(float yc, vec2 p, vec3 point, mat3 rotation, mat3 rrot
 
 vec4 backside(float yc, vec3 point)
 {
-	vec4 color = texture2D(from, point.xy);
+	vec4 color = getFromColor(point.xy);
 	float gray = (color.r + color.b + color.g) / 15.0;
 	gray += (8.0 / 10.0) * (pow(1.0 - abs(yc / cylinderRadius), 2.0 / 10.0) / 2.0 + (5.0 / 10.0));
 	color.rgb = vec3(gray);
 	return color;
 }
 
-vec4 behindSurface(float yc, vec3 point, mat3 rrotation)
+vec4 behindSurface(vec2 p, float yc, vec3 point, mat3 rrotation)
 {
 	float shado = (1.0 - ((-cylinderRadius - yc) / amount * 7.0)) / 6.0;
 	shado *= 1.0 - abs(point.x - 0.5);
@@ -447,48 +308,43 @@ vec4 behindSurface(float yc, vec3 point, mat3 rrotation)
 	{
 		shado = 0.0;
 	}
-	
-	vec2 texCoord = gl_FragCoord.xy / resolution.xy;
-
-	return vec4(texture2D(to, texCoord).rgb - shado, 1.0);
+	return vec4(getToColor(p).rgb - shado, 1.0);
 }
 
-void main()
-{
-	vec2 texCoord = gl_FragCoord.xy / resolution.xy;
-	
+vec4 transition(vec2 p) {
+
 	const float angle = 30.0 * PI / 180.0;
 	float c = cos(-angle);
 	float s = sin(-angle);
 
-	mat3 rotation = mat3( c, s, 0,
-								-s, c, 0,
-								0.12, 0.258, 1
-								);
+	mat3 rotation = mat3(
+		c, s, 0,
+		-s, c, 0,
+		0.12, 0.258, 1
+	);
 	c = cos(angle);
 	s = sin(angle);
 
-	mat3 rrotation = mat3(	c, s, 0,
-									-s, c, 0,
-									0.15, -0.5, 1
-								);
+	mat3 rrotation = mat3(
+		c, s, 0,
+		-s, c, 0,
+		0.15, -0.5, 1
+	);
 
-	vec3 point = rotation * vec3(texCoord, 1.0);
+	vec3 point = rotation * vec3(p, 1.0);
 
 	float yc = point.y - cylinderCenter;
 
 	if (yc < -cylinderRadius)
 	{
 		// Behind surface
-		gl_FragColor = behindSurface(yc, point, rrotation);
-		return;
+		return behindSurface(p,yc, point, rrotation);
 	}
 
 	if (yc > cylinderRadius)
 	{
 		// Flat surface
-		gl_FragColor = texture2D(from, texCoord);
-		return;
+		return getFromColor(p);
 	}
 
 	float hitAngle = (acos(yc / cylinderRadius) + cylinderAngle) - PI;
@@ -496,16 +352,14 @@ void main()
 	float hitAngleMod = mod(hitAngle, 2.0 * PI);
 	if ((hitAngleMod > PI && amount < 0.5) || (hitAngleMod > PI/2.0 && amount < 0.0))
 	{
-		gl_FragColor = seeThrough(yc, texCoord, rotation, rrotation);
-		return;
+		return seeThrough(yc, p, rotation, rrotation);
 	}
 
 	point = hitPoint(hitAngle, yc, point, rrotation);
 
 	if (point.x < 0.0 || point.y < 0.0 || point.x > 1.0 || point.y > 1.0)
 	{
-		gl_FragColor = seeThroughWithShadow(yc, texCoord, point, rotation, rrotation);
-		return;
+		return seeThroughWithShadow(yc, p, point, rotation, rrotation);
 	}
 
 	vec4 color = backside(yc, point);
@@ -520,18 +374,34 @@ void main()
 	}
 	else
 	{
-		otherColor = texture2D(from, texCoord);
+		otherColor = getFromColor(p);
 	}
 
 	color = antiAlias(color, otherColor, cylinderRadius - abs(yc));
 
-	vec4 cl = seeThroughWithShadow(yc, texCoord, point, rotation, rrotation);
+	vec4 cl = seeThroughWithShadow(yc, p, point, rotation, rrotation);
 	float dist = distanceToEdge(point);
 
-	gl_FragColor = antiAlias(color, cl, dist);
+	return antiAlias(color, cl, dist);
 }
 `
 
 	}
 
 };
+
+
+export function getShader( effectName ) {
+
+	return shaders[ effectName ];
+
+}
+
+export function addShader( effectName, source, uniforms ) {
+
+	shaders[ effectName ] = {
+		uniforms,
+		source,
+	};
+
+}
