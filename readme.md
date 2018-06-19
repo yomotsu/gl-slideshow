@@ -9,7 +9,7 @@ Also, 2D Canvas fallback is available for WebGL disabled browsers such as IE9. (
 [![dependencies Status](https://david-dm.org/yomotsu/GLSlideshow.js/status.svg)](https://david-dm.org/yomotsu/GLSlideshow.js)
 [![devDependencies Status](https://david-dm.org/yomotsu/GLSlideshow.js/dev-status.svg)](https://david-dm.org/yomotsu/GLSlideshow.js?type=dev)
 
-Shaders are forked from http://transitions.glsl.io/
+Shaders are forked from https://gl-transitions.com/
 
 ## Examples
 
