@@ -16,6 +16,7 @@ Shaders are forked from http://transitions.glsl.io/
 - [Basic](http://yomotsu.github.io/GLSlideshow.js/examples/basic.html)
 - [APIs](http://yomotsu.github.io/GLSlideshow.js/examples/apis.html)
 - [Responsive](http://yomotsu.github.io/GLSlideshow.js/examples/responsive.html)
+- [Cover scale](http://yomotsu.github.io/GLSlideshow.js/examples/cover.html)
 - [Custom shader](http://yomotsu.github.io/GLSlideshow.js/examples/shader.html)
 
 ## Usage
