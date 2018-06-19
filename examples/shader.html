@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>=^.^=</title>
+</head>
+<body>
+<div><a href="https://github.com/yomotsu/GLSlideshow.js">GitHub repo</a></div>
+
+<div id="slideshow-placeholder"></div>
+
+<script src="../dist/GLSlideshow.js"></script>
+<script>
+const uniforms = {
+	smoothness: { value: 0.3,  type: 'float' }
+};
+const shader = [
+	'uniform float smoothness; // = 0.3',
+
+	'const vec2 center = vec2(0.5, 0.5);',
+	'const float SQRT_2 = 1.414213562373;',
+
+	'vec4 transition (vec2 uv) {',
+	'	vec4 color = progress < 0.5 ? getFromColor(uv) : getToColor(uv);',
+	'	float x = progress < 0.5 ? 1. - progress * 2. : 1.0 - (progress * 2. - 1.);',
+	'	float m = smoothstep(-smoothness, 0.0, SQRT_2*distance(center, uv) - x*(1.+smoothness));',
+	'	return mix(color, vec4(1.0), progress > 0.5 ? 1.-m : m);',
+	'}'
+].join( '\n' );
+GLSlideshow.addShader( 'myShader', shader, uniforms );
+
+var slideshow = GLSlideshow.autoDetectRenderer(
+	[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
+	{
+		width: 1024,        // optional
+		height: 576,        // optional
+		duration: 2000,     // optional
+		interval: 3000,     // optional
+		effect: 'myShader'
+	}
+);
+
+document.getElementById( 'slideshow-placeholder' ).appendChild( slideshow.domElement );
+</script>
+
+</body>
+</html>

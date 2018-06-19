@@ -6,9 +6,29 @@ const vertexShaderSource = `
 attribute vec2 position;
 attribute vec2 uv;
 varying vec2 vUv;
-void main () {
+void main() {
 	gl_Position = vec4( position, 1., 1. );
 	vUv = uv;
+}
+`;
+
+const fragmentShaderSourceHead = `
+precision highp float;
+varying vec2 vUv;
+uniform float progress, ratio;
+uniform vec2 resolution;
+uniform sampler2D from, to;
+vec4 getFromColor( vec2 uv ) {
+	return texture2D(from, uv);
+}
+vec4 getToColor( vec2 uv ) {
+	return texture2D(to, uv);
+}
+`;
+
+const fragmentShaderSourceFoot = `
+void main(){
+	gl_FragColor=transition(vUv);
 }
 `;
 
@@ -51,7 +71,10 @@ export default class WebGLRenderer extends Renderer {
 	setEffect( effectName ) {
 
 		const shader = getShader( effectName );
-		const FSSource = shader.source;
+		const FSSource =
+			fragmentShaderSourceHead +
+			shader.source +
+			fragmentShaderSourceFoot;
 		const uniforms = shader.uniforms;
 		let i = 0;
 
