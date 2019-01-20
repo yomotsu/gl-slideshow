@@ -10,8 +10,6 @@ const license = `/*!
 
 export default {
 	input: 'src/index.js',
-	indent: '\t',
-	sourceMap: false,
 	output: [
 		{
 			format: 'umd',
