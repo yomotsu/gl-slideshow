@@ -1,31 +1,33 @@
 import babel from 'rollup-plugin-babel'
+import pkg from './package.json';
 
 const license = `/*!
  * @author yomotsu
  * GLSlideshow
- * https://github.com/yomotsu/GLSlideshow
+ * https://github.com/yomotsu/gl-slideshow
  * Released under the MIT License.
  */`
 
 export default {
-	input: 'src/GLSlideshow.js',
+	input: 'src/index.js',
+	indent: '\t',
 	sourceMap: false,
-	plugins: [
-		babel( { exclude: 'node_modules/**' } )
-	],
 	output: [
 		{
 			format: 'umd',
 			name: 'GLSlideshow',
-			file: 'dist/GLSlideshow.js',
+			file: pkg.main,
+			banner: license,
 			indent: '\t',
-			banner: license
 		},
 		{
 			format: 'es',
-			file: 'dist/GLSlideshow.module.js',
+			file: pkg.module,
+			banner: license,
 			indent: '\t',
-			banner: license
 		}
+	],
+	plugins: [
+		babel( { exclude: 'node_modules/**' } )
 	]
 };

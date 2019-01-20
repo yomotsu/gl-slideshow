@@ -3,30 +3,38 @@
   "version": "1.1.0",
   "author": "Yomotsu",
   "license": "MIT",
-  "main": "dist/GLSlideshow.js",
-  "repository": "yomotsu/GLSlideshow.js",
-  "jsnext:main": "dist/GLSlideshow.module.js",
-  "module": "dist/GLSlideshow.module.js",
+  "main": "dist/gl-slideshow.js",
+  "repository": "yomotsu/gl-slideshow.js",
+  "jsnext:main": "dist/gl-slideshow.module.js",
+  "module": "dist/gl-slideshow.module.js",
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "1.6.1",
-    "rollup": "^0.58.2",
-    "rollup-plugin-babel": "3.0.4",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/runtime": "^7.2.0",
+    "rollup": "^1.1.1",
+    "rollup-plugin-babel": "4.3.2",
     "rollup-watch": "^4.3.1",
-    "uglify-js": "^3.3.23"
+    "uglify-js": "^3.4.9"
   },
   "scripts": {
     "dev": "npm run watch",
     "watch": "rollup --config --watch",
     "build": "rollup --config",
-    "release": "rollup --config && uglifyjs dist/GLSlideshow.js -cm --preamble \"/*!\n * @author yomotsu\n * GLSlideshow\n * https://github.com/yomotsu/GLSlideshow\n * Released under the MIT License.\n */\" > dist/GLSlideshow.min.js"
+    "release": "rollup --config && uglifyjs dist/gl-slideshow.js -cm --preamble \"/*!\n * @author yomotsu\n * GLSlideshow\n * https://github.com/yomotsu/GLSlideshow\n * Released under the MIT License.\n */\" > dist/GLSlideshow.min.js"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "useBuiltIns": false
+        }
+      ]
+    ]
   },
   "browserslist": [
     "last 2 versions",
-    "ie >= 9"
-  ],
-  "engines": {
-    "node": "6.9.4",
-    "npm": "3.10.10"
-  }
+    "ie >= 11"
+  ]
 }

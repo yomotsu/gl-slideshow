@@ -1,49 +1,18 @@
 import EventDispatcher from './EventDispatcher.js';
 
-const rAF = function () {
-
-	let lastTime = 0;
-
-	if ( !! window.requestAnimationFrame ) {
-
-		return window.requestAnimationFrame;
-
-	} else {
-
-		return function ( callback ) {
-
-			const currTime = new Date().getTime();
-			const timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) );
-			const id = setTimeout(
-				() => {
-
-					callback( currTime + timeToCall );
-
-				},
-				timeToCall
-			);
-			lastTime = currTime + timeToCall;
-			return id;
-
-		};
-
-	}
-
-}();
-
 /**
  * Primitive Renderer class.
  * @class WebGLRenderer
  * @constructor
  * @param {...(String|Image)} images List of path to image of Image element
- * @param {Object} params
- * @param {Number} params.width
- * @param {Number} params.height
+ * @param {Object} options
+ * @param {Number} options.width
+ * @param {Number} options.height
  */
 
 export default class Renderer extends EventDispatcher {
 
-	constructor( images, params ) {
+	constructor( images, options ) {
 
 		super();
 
@@ -52,10 +21,10 @@ export default class Renderer extends EventDispatcher {
 		this.elapsedTime = 0;
 		this.isRunning   = true;
 		this.inTranstion = false;
-		this.duration = params && params.duration || 1000;
-		this.interval = Math.max( params && params.interval || 5000, this.duration );
+		this.duration = options && options.duration || 1000;
+		this.interval = Math.max( options && options.interval || 5000, this.duration );
 		this.isUpdated = true;
-		this.domElement = params && params.canvas || document.createElement( 'canvas' );
+		this.domElement = options && options.canvas || document.createElement( 'canvas' );
 		this.images = [];
 
 		images.forEach( ( image, i ) => this.insert( image, i ) );
@@ -118,7 +87,7 @@ export default class Renderer extends EventDispatcher {
 
 		}
 
-		rAF( this.tick.bind( this ) );
+		requestAnimationFrame( this.tick.bind( this ) );
 
 		if ( this.isUpdated ) this.render();
 

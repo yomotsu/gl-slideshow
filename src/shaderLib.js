@@ -7,7 +7,7 @@ const shaders = {
 		uniforms: {},
 		source: `
 vec4 transition (vec2 uv) {
-	return mix( texture2D( from, v ), texture2D( to, v ), progress );;
+	return mix( getFromColor(uv), getToColor(uv), progress );
 }`
 	},
 

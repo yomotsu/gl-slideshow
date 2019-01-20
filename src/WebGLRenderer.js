@@ -37,31 +37,30 @@ void main(){
  * @class WebGLRenderer
  * @constructor
  * @param {...(String|Image)} images List of path to image of Image element
- * @param {Object} params
- * @param {Number} params.width
- * @param {Number} params.height
- * @param {String} params.effect
+ * @param {Object} options
+ * @param {Number} options.width
+ * @param {Number} options.height
+ * @param {String} options.effect
  */
 
 export default class WebGLRenderer extends Renderer {
 
-	constructor( images, params = {} ) {
+	constructor( images, options = {} ) {
 
-		super( images, params );
+		super( images, options );
 
-		this.context = this.domElement.getContext( 'webgl' ) ||
-									 this.domElement.getContext( 'experimental-webgl' );
+		this.context = this.domElement.getContext( 'webgl' ) || this.domElement.getContext( 'experimental-webgl' );
 
 		this.resolution = new Float32Array( [
-			params.width || this.domElement.width,
-			params.height || this.domElement.height
+			options.width || this.domElement.width,
+			options.height || this.domElement.height
 		] );
-		this.imageAspect = params.imageAspect || this.resolution[ 0 ] / this.resolution[ 1 ];
+		this.imageAspect = options.imageAspect || this.resolution[ 0 ] / this.resolution[ 1 ];
 
 		this.vertexShader = this.context.createShader( this.context.VERTEX_SHADER );
 		this.context.shaderSource( this.vertexShader, vertexShaderSource );
 		this.context.compileShader( this.vertexShader );
-		this.setEffect( params.effect || 'crossFade' );
+		this.setEffect( options.effect || 'crossFade' );
 		this.progress = 0;
 
 		this.tick();

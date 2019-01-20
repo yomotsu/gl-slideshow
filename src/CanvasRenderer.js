@@ -6,16 +6,16 @@ import Texture  from './Texture.js';
  * @class CanvasRenderer
  * @constructor
  * @param {...(String|Image)} images List of path to image of Image element
- * @param {Object} params
- * @param {Number} params.width
- * @param {Number} params.height
+ * @param {Object} options
+ * @param {Number} options.width
+ * @param {Number} options.height
  */
 
 export default class CanvasRenderer extends Renderer {
 
-	constructor( images, params ) {
+	constructor( images, options ) {
 
-		super( images, params );
+		super( images, options );
 
 		this.context = this.domElement.getContext( '2d' );
 
@@ -26,8 +26,8 @@ export default class CanvasRenderer extends Renderer {
 		this.to.addEventListener( 'updated', this.updateTexture.bind( this ) );
 
 		this.setSize(
-			params.width  || this.domElement.width,
-			params.height || this.domElement.height
+			options.width  || this.domElement.width,
+			options.height || this.domElement.height
 		);
 		this.tick();
 
