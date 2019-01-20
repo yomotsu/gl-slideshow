@@ -13,11 +13,11 @@ Shaders are forked from https://gl-transitions.com/
 
 ## Examples
 
-- [Basic](http://yomotsu.github.io/GLSlideshow.js/examples/basic.html)
-- [APIs](http://yomotsu.github.io/GLSlideshow.js/examples/apis.html)
-- [Responsive](http://yomotsu.github.io/GLSlideshow.js/examples/responsive.html)
-- [Cover scale](http://yomotsu.github.io/GLSlideshow.js/examples/cover.html)
-- [Custom shader](http://yomotsu.github.io/GLSlideshow.js/examples/shader.html)
+- [Basic](http://yomotsu.github.io/GLSlideshow/examples/basic.html)
+- [APIs](http://yomotsu.github.io/GLSlideshow/examples/apis.html)
+- [Responsive](http://yomotsu.github.io/GLSlideshow/examples/responsive.html)
+- [Cover scale](http://yomotsu.github.io/GLSlideshow/examples/cover.html)
+- [Custom shader](http://yomotsu.github.io/GLSlideshow/examples/shader.html)
 
 ## Usage
 

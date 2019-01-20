@@ -15,13 +15,11 @@
     "rollup": "^1.1.1",
     "rollup-plugin-babel": "4.3.2",
     "rollup-watch": "^4.3.1",
-    "uglify-js": "^3.4.9"
+    "terser": "^3.14.1"
   },
   "scripts": {
-    "dev": "npm run watch",
-    "watch": "rollup --config --watch",
-    "build": "rollup --config",
-    "release": "rollup --config && uglifyjs dist/gl-slideshow.js -cm --preamble \"/*!\n * @author yomotsu\n * GLSlideshow\n * https://github.com/yomotsu/GLSlideshow\n * Released under the MIT License.\n */\" > dist/GLSlideshow.min.js"
+    "dev": "rollup --config --watch",
+    "build": "rollup --config && terser 'dist/gl-slideshow.js' -o 'dist/gl-slideshow.min.js' --comments '/^!/'"
   },
   "babel": {
     "presets": [
