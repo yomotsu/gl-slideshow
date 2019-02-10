@@ -26,7 +26,7 @@ Shaders are forked from https://gl-transitions.com/
 Copy GLSlideshow.js from /dist/GLSlideshow.js and place it in your project. Then, Load the js file in your HTML
 
 ```html
-<script src="./js/gl-slideshow.js"></script>
+<script src="./js/gl-slideshow"></script>
 ```
 
 ### with NPM
