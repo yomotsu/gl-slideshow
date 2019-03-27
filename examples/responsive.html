@@ -14,11 +14,13 @@
 <div><a href="https://github.com/yomotsu/GLSlideshow">GitHub repo</a></div>
 <div>Try to resize the window</div>
 
-<canvas id="myCanvas"></canvas>
+<div id="container">
+	<canvas id="myCanvas"></canvas>
+</div>
 
 <script src="../dist/gl-slideshow.js"></script>
 <script>
-var container = document.getElementById( 'slideshow-placeholder' );
+var container = document.getElementById( 'container' );
 var slideshow = new GLSlideshow(
 	[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
 	{
