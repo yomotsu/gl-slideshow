@@ -64,7 +64,7 @@ body{
 
 <script src="../dist/gl-slideshow.js"></script>
 <script>
-var slideshow = GLSlideshow.autoDetectRenderer(
+var slideshow = new GLSlideshow(
 	[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
 	{
 		width: 512,        // optional
@@ -96,18 +96,18 @@ document.getElementById( 'slideshow-placeholder' ).appendChild( slideshow.domEle
 	</div>
 
 	<div class="doc__item">
-		<pre><code>instance.getCurrent();</code></pre>
-		<button onclick="alert( slideshow.getCurrent() );">run</button>
+		<pre><code>instance.currentIndex;</code></pre>
+		<button onclick="alert( slideshow.currentIndex );">run</button>
 	</div>
 
 	<div class="doc__item">
-		<pre><code>instance.getPrev();</code></pre>
-		<button onclick="alert( slideshow.getPrev() );">run</button>
+		<pre><code>instance.prevIndex;</code></pre>
+		<button onclick="alert( slideshow.prevIndex );">run</button>
 	</div>
 
 	<div class="doc__item">
-		<pre><code>instance.getNext();</code></pre>
-		<button onclick="alert( slideshow.getNext() );">run</button>
+		<pre><code>instance.nextIndex;</code></pre>
+		<button onclick="alert( slideshow.nextIndex );">run</button>
 	</div>
 
 	<div class="doc__item">
@@ -172,8 +172,8 @@ size.addEventListener( 'change', function () {
 	</div>
 
 	<div class="doc__item">
-		<pre><code>instance.dispose();</code></pre>
-		<button onclick="slideshow.dispose();">run</button>
+		<pre><code>instance.destory();</code></pre>
+		<button onclick="slideshow.destory();">run</button>
 	</div>
 
 </div>

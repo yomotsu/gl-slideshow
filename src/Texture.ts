@@ -1,7 +1,8 @@
-import EventDispatcher from './EventDispatcher.js';
+import { EventDispatcher } from './EventDispatcher';
 
-const defaultImage = new Image();
-defaultImage.src = 'data:image/gif;base64,R0lGODlhAgACAPAAAP///wAAACwAAAAAAgACAEACAoRRADs=';
+const defaultImage = document.createElement( 'canvas' );
+defaultImage.width = 2;
+defaultImage.height = 2;
 
 /**
  * WebGL Texture class.
@@ -11,32 +12,31 @@ defaultImage.src = 'data:image/gif;base64,R0lGODlhAgACAPAAAP///wAAACwAAAAAAgACAE
  * @param {WebGLRenderingContext} gl
  */
 
-export default class WebGLTexture extends EventDispatcher {
+export class Texture extends EventDispatcher {
 
-	constructor( image, gl ) {
+	image: HTMLImageElement;
+	gl: WebGLRenderingContext;
+	texture: WebGLTexture;
+
+	constructor( image: HTMLImageElement, gl: WebGLRenderingContext ) {
 
 		super();
 
 		this.image = image;
-
-		if ( !! gl && gl instanceof WebGLRenderingContext ) {
-
-			this.gl = gl;
-			this.texture = gl.createTexture();
-			gl.bindTexture( gl.TEXTURE_2D, this.texture );
-			gl.texImage2D(
-				gl.TEXTURE_2D,
-				0,
-				gl.RGBA,
-				1,
-				1,
-				0,
-				gl.RGBA,
-				gl.UNSIGNED_BYTE, 
-				new Uint8Array( [ 0, 0, 0, 255 ] )
-			);
-
-		}
+		this.gl = gl;
+		this.texture = gl.createTexture()!;
+		gl.bindTexture( gl.TEXTURE_2D, this.texture );
+		gl.texImage2D(
+			gl.TEXTURE_2D,
+			0,
+			gl.RGBA,
+			1,
+			1,
+			0,
+			gl.RGBA,
+			gl.UNSIGNED_BYTE,
+			new Uint8Array( [ 0, 0, 0, 255 ] ),
+		);
 
 		this.onload();
 
@@ -68,7 +68,7 @@ export default class WebGLTexture extends EventDispatcher {
 
 	}
 
-	setImage( image ) {
+	setImage( image: HTMLImageElement ) {
 
 		const _gl = this.gl;
 		let _image;
@@ -94,7 +94,7 @@ export default class WebGLTexture extends EventDispatcher {
 		}
 
 		_gl.bindTexture( _gl.TEXTURE_2D, this.texture );
-		_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, true );
+		_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, + true );
 		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MAG_FILTER, _gl.LINEAR );
 		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, _gl.LINEAR );
 		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_WRAP_S, _gl.CLAMP_TO_EDGE );

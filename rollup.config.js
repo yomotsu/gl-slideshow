@@ -1,4 +1,4 @@
-import babel from 'rollup-plugin-babel'
+import typescript from 'rollup-plugin-typescript2';
 import pkg from './package.json';
 
 const license = `/*!
@@ -6,10 +6,10 @@ const license = `/*!
  * GLSlideshow
  * https://github.com/yomotsu/gl-slideshow
  * Released under the MIT License.
- */`
+ */`;
 
 export default {
-	input: 'src/index.js',
+	input: 'src/index.ts',
 	output: [
 		{
 			format: 'umd',
@@ -26,6 +26,6 @@ export default {
 		}
 	],
 	plugins: [
-		babel( { exclude: 'node_modules/**' } )
-	]
+		typescript( { typescript: require( 'typescript' ) } ),
+	],
 };

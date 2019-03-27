@@ -9,16 +9,17 @@
 	<a href="https://github.com/yomotsu/GLSlideshow">GitHub repo</a><br>
 	try to resize the browser window.
 </div>
-<div id="slideshow-placeholder"></div>
+<canvas id="myCanvas"></canvas>
 
 <script src="../dist/gl-slideshow.js"></script>
 <script>
 var imageWidth  = 1024;
 var imageHeight = 576;
 var imageAspect = imageWidth / imageHeight;
-var slideshow = GLSlideshow.autoDetectRenderer(
+var slideshow = new GLSlideshow(
 	[ './img/1.jpg', './img/3.jpg', './img/4.jpg' ],
 	{
+		canvas: document.getElementById( 'myCanvas' ), // optional
 		width: document.body.clientWidth, // optional
 		height: 400,             // optional
 		imageAspect: imageAspect,// optional. the param to be "cover"
