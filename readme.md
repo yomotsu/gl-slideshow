@@ -40,7 +40,7 @@ Copy GLSlideshow.js from `/dist/gl-slideshow.js` and place it in your project. T
 <canvas id="myCanvas"></canvas>
 
 <script>
-var slideshow = new GLSlideshow(
+const slideshow = new GLSlideshow(
 	[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
 	{
 		canvas: document.getElementById( 'myCanvas' ), // optional
@@ -101,7 +101,7 @@ For more detail, see [APIs example](http://yomotsu.github.io/GLSlideshow.js/exam
 - `instance.replace( images )`
 - `instance.transition( to )`
 - `instance.setEffect( effectName [, uniforms ] )`
-- `instance.dipose()`
+- `instance.destory()`
 
 Editable params
 
