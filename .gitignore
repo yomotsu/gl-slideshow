@@ -4,3 +4,5 @@ node_modules
 Thumbs.db
 .sass-cache
 npm-debug.log
+.rpt2_cache
+package-lock.json

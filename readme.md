@@ -1,17 +1,12 @@
-# GLSlideshow.js
+# gl-slideshow
 
-Advanced 2D slideshow with WebGL, that provides a variety of beautiful effects with GLSL power!
-
-Also, 2D Canvas fallback is available for WebGL disabled browsers such as IE9. (The canvas fallback only supports cross-fade)
+An advanced 2D slideshow with WebGL, provides a variety of beautiful effects with GLSL power.
 
 [![Latest NPM release](https://img.shields.io/npm/v/GLSlideshow.svg)](https://www.npmjs.com/package/GLSlideshow)
-![MIT License](https://img.shields.io/npm/l/GLSlideshow.svg)
-[![dependencies Status](https://david-dm.org/yomotsu/GLSlideshow.js/status.svg)](https://david-dm.org/yomotsu/GLSlideshow.js)
-[![devDependencies Status](https://david-dm.org/yomotsu/GLSlideshow.js/dev-status.svg)](https://david-dm.org/yomotsu/GLSlideshow.js?type=dev)
 
 Shaders are forked from https://gl-transitions.com/
 
-## Examples
+## Working Examples
 
 - [Basic](http://yomotsu.github.io/GLSlideshow/examples/basic.html)
 - [APIs](http://yomotsu.github.io/GLSlideshow/examples/apis.html)
@@ -20,16 +15,6 @@ Shaders are forked from https://gl-transitions.com/
 - [Custom shader](http://yomotsu.github.io/GLSlideshow/examples/shader.html)
 
 ## Usage
-
-### Standalone
-
-Copy GLSlideshow.js from /dist/GLSlideshow.js and place it in your project. Then, Load the js file in your HTML
-
-```html
-<script src="./js/gl-slideshow"></script>
-```
-
-### with NPM
 
 ```
 $ npm install --save GLSlideshow
@@ -41,17 +26,24 @@ then
 import GLSlideshow from 'GLSlideshow';
 ```
 
-### making GLSlideshow instance
+### Traditional way in web browser
 
-`autoDetectRenderer()` returns either WebGL slideshow instance for modern browsers, or Canvas slideshow instance for canvas available browsers as fallback.
+Copy GLSlideshow.js from `/dist/gl-slideshow.js` and place it in your project. Then, Load the js file in your HTML
 
 ```html
-<div id="slideshow-placeholder"></div>
+<script src="./path/to/gl-slideshow.js"></script>
+```
+
+### Make a GLSlideshow instance
+
+```html
+<canvas id="myCanvas"></canvas>
 
 <script>
-var slideshow = GLSlideshow.autoDetectRenderer(
+var slideshow = new GLSlideshow(
 	[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
 	{
+		canvas: document.getElementById( 'myCanvas' ), // optional
 		width: 1024,        // optional
 		height: 576,        // optional
 		duration: 1000,     // optional
@@ -64,55 +56,30 @@ document.getElementById( 'slideshow-placeholder' ).appendChild( slideshow.domEle
 </script>
 ```
 
-If you would like to use with jQuery, just append using the jQuery feature, instead of pure DOM methods.
-
-```html
-<script>
-$( function () {
-
-	var slideshow = GLSlideshow.autoDetectRenderer(
-		[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
-		{
-			width: 1024,        // optional
-			height: 576,        // optional
-			duration: 1000,     // optional
-			interval: 5000,     // optional
-			effect: 'crossZoom' // optional
-		}
-	);
-
-	$( '#slideshow-placeholder' ).append( slideshow.domElement );
-
-} );
-
-</script>
-```
-
 ## Constructor and Options
 
-- function: `GLSlideshow.autoDetectRenderer( images, options )`  
-  returns instance of WebGLRenderer or CanvasRenderer
-- class: `GLSlideshow.WebGLRenderer( images, options )`  
-  to make a WebGLRenderer instance
-- class: `GLSlideshow.CanvasRenderer( images, options )`  
-  to make a CanvasRenderer instance
+```js
+new GLSlideshow( images, options );
+```
 
 ### images (required)
 
-An array that consists of Image elements or strings for path to image.  
+An array consists of HTMLImageElements or strings for path to image.  
 Images must be hosted on the same domain or arrowed CORS.
 
-### other options (optional)
+### Options
 
-| key        | value |
-| ---        | ---   |
-| `width`    | number: width in pixels |
-| `height`   | number: height in pixels |
-| `duration` | number: duration time in milliseconds |
-| `interval` | number: interval time in milliseconds |
-| `effect`   | string: name of effect *1 |
+| key           | type                | value |
+| ------------- | ------------------- | ----- |
+| `canvas`      | `HTMLCanvasElement` | The canvas element |
+| `width`       | `number`            | width in pixels |
+| `height`      | `number`            | height in pixels |
+| `imageAspect` | `number`            | aspect ratio of the image (assume all images are the same aspect ratio) |
+| `duration`    | `number`            | duration time in milliseconds |
+| `interval`    | `number`            | interval time in milliseconds |
+| `effect`      | `string`            | name of effect ***1** |
 
-*1 Effect option currently takes following strings
+***1** Effect option currently takes following strings
 
 - `'crossFade'`
 - `'crossZoom'`
@@ -128,9 +95,6 @@ For more detail, see [APIs example](http://yomotsu.github.io/GLSlideshow.js/exam
 
 - `instance.pause()`
 - `instance.play()`
-- `instance.getCurrent()`
-- `instance.getPrev()`
-- `instance.getNext()`
 - `instance.setSize( width, height )`
 - `instance.insert( image, order )`
 - `instance.remove( order )`
@@ -147,6 +111,9 @@ Editable params
 Read only params
 
 - `instance.inTranstion`
+- `instance.currentIndex`
+- `instance.prevIndex`
+- `instance.nextIndex`
 
 Events
 
@@ -155,6 +122,4 @@ Events
 
 Static methods
 
-- `GLSlideshow.hasCanvas()`
-- `GLSlideshow.hasWebGL()`
 - `GLSlideshow.addShader( 'shaderName', shaderSource, uniforms )`

@@ -1,7 +1,49 @@
 // https://gl-transitions.com/
-const head = '';
 
-const shaders = {
+export interface Uniforms {
+	[ key: string ]: number | number[];
+}
+
+interface ShaderSourceAndUniforms {
+	uniforms: Uniforms;
+	source: string;
+}
+
+interface Shaders {
+	[ shaderName: string ]: ShaderSourceAndUniforms;
+}
+
+export const VERTEX_SHADER_SOURCE = `
+attribute vec2 position;
+attribute vec2 uv;
+varying vec2 vUv;
+void main() {
+	gl_Position = vec4( position, 1., 1. );
+	vUv = uv;
+}
+`;
+
+export const FRAGMENT_SHADER_SOURCE_HEAD = `
+precision highp float;
+varying vec2 vUv;
+uniform float progress, ratio;
+uniform vec2 resolution;
+uniform sampler2D from, to;
+vec4 getFromColor( vec2 uv ) {
+	return texture2D(from, uv);
+}
+vec4 getToColor( vec2 uv ) {
+	return texture2D(to, uv);
+}
+`;
+
+export const FRAGMENT_SHADER_SOURCE_FOOT = `
+void main(){
+	gl_FragColor = transition( vUv );
+}
+`;
+
+const shaders: Shaders = {
 
 	crossFade: {
 		uniforms: {},
@@ -14,7 +56,7 @@ vec4 transition (vec2 uv) {
 	crossZoom: {
 		// by https://gl-transitions.com/editor/crosszoom
 		uniforms: {
-			strength: { value: 0.4, type: 'float' }
+			strength: 0.4,
 		},
 		source: `
 // License: MIT
@@ -87,8 +129,8 @@ vec4 transition(vec2 uv) {
 	directionalWipe: {
 		// by https://gl-transitions.com/editor/directionalwipe
 		uniforms: {
-			direction:  { value: [ 1, - 1 ], type: 'vec2' },
-			smoothness: { value: 0.4, type: 'float' }
+			direction : [ 1, - 1 ],
+			smoothness: 0.4
 		},
 		source: `
 // Author: gre
@@ -114,7 +156,7 @@ vec4 transition (vec2 uv) {
 	wind: {
 		// by http://transitions.glsl.io/transition/7de3f4b9482d2b0bf7bb
 		uniforms: {
-			size: { value: 0.2, type: 'float' }
+			size: 0.2,
 		},
 		source: `
 // Author: gre
@@ -142,8 +184,8 @@ vec4 transition (vec2 uv) {
 	ripple: {
 		// by https://gl-transitions.com/editor/ripple
 		uniforms: {
-			amplitude: { value: 100, type: 'float' },
-			speed:     { value: 50,  type: 'float' }
+			amplitude: 100,
+			speed    : 50,
 		},
 		source: `
 // Author: gre
@@ -390,14 +432,13 @@ vec4 transition(vec2 p) {
 
 };
 
-
-export function getShader( effectName ) {
+export function getShader( effectName: string ): ShaderSourceAndUniforms {
 
 	return shaders[ effectName ];
 
 }
 
-export function addShader( effectName, source, uniforms ) {
+export function addShader( effectName: string, source: string, uniforms: Uniforms ) {
 
 	shaders[ effectName ] = {
 		uniforms,
