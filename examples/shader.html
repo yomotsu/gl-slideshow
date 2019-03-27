@@ -29,7 +29,7 @@ const shader = [
 ].join( '\n' );
 GLSlideshow.addShader( 'myShader', shader, uniforms );
 
-var slideshow = GLSlideshow.autoDetectRenderer(
+var slideshow = new GLSlideshow(
 	[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
 	{
 		canvas: document.getElementById( 'myCanvas' ), // optional
