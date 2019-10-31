@@ -51,8 +51,6 @@ const slideshow = new GLSlideshow(
 		effect: 'crossZoom' // optional
 	}
 );
-
-document.getElementById( 'slideshow-placeholder' ).appendChild( slideshow.domElement );
 </script>
 ```
 
@@ -99,7 +97,7 @@ For more detail, see [APIs example](http://yomotsu.github.io/GLSlideshow.js/exam
 - `instance.insert( image, order )`
 - `instance.remove( order )`
 - `instance.replace( images )`
-- `instance.transition( to )`
+- `instance.to( to )`
 - `instance.setEffect( effectName [, uniforms ] )`
 - `instance.destory()`
 
@@ -110,7 +108,9 @@ Editable params
 
 Read only params
 
-- `instance.inTranstion`
+- `instance.domElement`
+- `instance.inTransition`
+- `instance.length`
 - `instance.currentIndex`
 - `instance.prevIndex`
 - `instance.nextIndex`

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>=^.^=</title>
+</head>
+<body>
+<div><a href="https://github.com/yomotsu/GLSlideshow">GitHub repo</a></div>
+
+<canvas id="myCanvas"></canvas>
+
+<button
+	type="button"
+	class="glslideshow__prev"
+>prev</button>
+
+<button
+	type="button"
+	class="glslideshow__next"
+>next</button>
+
+<div class="glslideshow__pagination"></div>
+
+<script src="../dist/gl-slideshow.js"></script>
+<script>
+const slideshow = new GLSlideshow(
+	[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
+	{
+		canvas: document.getElementById( 'myCanvas' ), // optional
+		width: 1024,        // optional
+		height: 576,        // optional
+		duration: 1000,     // optional
+		interval: 3000,     // optional
+		effect: 'crossZoom' // optional
+	}
+);
+
+document.querySelector( '.glslideshow__prev' ).addEventListener( 'click', function () {
+	if ( slideshow.inTransition ) return;
+	slideshow.to( slideshow.prevIndex );
+} );
+
+document.querySelector( '.glslideshow__next' ).addEventListener( 'click', function () {
+	if ( slideshow.inTransition ) return;
+	slideshow.to( slideshow.nextIndex );
+} );
+
+for ( var i = 0; i < slideshow.length; i ++ ) {
+
+	const $dot = document.createElement( 'span' );
+	document.querySelector( '.glslideshow__pagination' ).appendChild( $dot );
+
+}
+
+
+
+</script>
+
+</body>
+</html>
