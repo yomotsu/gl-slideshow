@@ -206,7 +206,7 @@ var GLSlideshow = (function (_super) {
         _this._transitionStartTime = 0;
         _this._progress = 0;
         _this._isRunning = true;
-        _this._inTranstion = false;
+        _this._inTransition = false;
         _this._hasUpdated = true;
         _this._images = [];
         _this._resolution = new Float32Array([0, 0]);
@@ -241,7 +241,7 @@ var GLSlideshow = (function (_super) {
                 _this._elapsedTime = Date.now() - _this._startTime;
             requestAnimationFrame(tick);
             if (_this.interval + _this.duration < _this._elapsedTime) {
-                _this.transition(_this.nextIndex);
+                _this.to(_this.nextIndex);
             }
             if (_this._hasUpdated)
                 _this.render();
@@ -268,32 +268,39 @@ var GLSlideshow = (function (_super) {
     });
     Object.defineProperty(GLSlideshow.prototype, "nextIndex", {
         get: function () {
-            return (this._currentIndex < this._images.length - 1) ? this._currentIndex + 1 : 0;
+            return (this._currentIndex < this.length - 1) ? this._currentIndex + 1 : 0;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(GLSlideshow.prototype, "prevIndex", {
         get: function () {
-            return (this._currentIndex !== 0) ? this._currentIndex - 1 : this._images.length;
+            return (this._currentIndex !== 0) ? this._currentIndex - 1 : this.length - 1;
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(GLSlideshow.prototype, "inTranstion", {
+    Object.defineProperty(GLSlideshow.prototype, "length", {
         get: function () {
-            return this._inTranstion;
+            return this._images.length;
         },
         enumerable: true,
         configurable: true
     });
-    GLSlideshow.prototype.transition = function (to) {
+    Object.defineProperty(GLSlideshow.prototype, "inTransition", {
+        get: function () {
+            return this._inTransition;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    GLSlideshow.prototype.to = function (to) {
         this._from.setImage(this._images[this._currentIndex]);
         this._to.setImage(this._images[to]);
         this._transitionStartTime = Date.now();
         this._startTime = Date.now();
         this._currentIndex = to;
-        this._inTranstion = true;
+        this._inTransition = true;
         this._hasUpdated = true;
         this.dispatchEvent({ type: 'transitionStart' });
     };
@@ -336,25 +343,23 @@ var GLSlideshow = (function (_super) {
         this._images.splice(order, 0, image);
     };
     GLSlideshow.prototype.remove = function (order) {
-        if (this._images.length === 1)
+        if (this.length === 1)
             return;
         this._images.splice(order, 1);
     };
     GLSlideshow.prototype.replace = function (images) {
         var _this = this;
-        var length = this._images.length;
-        images.forEach(function (image) { return _this.insert(image, _this._images.length); });
-        for (var i = 0 | 0; i < length; i = (i + 1) | 0) {
+        var length = this.length;
+        images.forEach(function (image) { return _this.insert(image, _this.length); });
+        for (var i = 0; i < length; i++) {
             this.remove(0);
         }
         this._hasUpdated = true;
-        this.transition(0);
+        this.to(0);
     };
     GLSlideshow.prototype.setEffect = function (effectName) {
         var shader = getShader(effectName);
-        var FSSource = FRAGMENT_SHADER_SOURCE_HEAD +
-            shader.source +
-            FRAGMENT_SHADER_SOURCE_FOOT;
+        var FSSource = FRAGMENT_SHADER_SOURCE_HEAD + shader.source + FRAGMENT_SHADER_SOURCE_FOOT;
         var uniforms = shader.uniforms;
         if (this._program) {
             this._gl.deleteTexture(this._from.texture);
@@ -433,15 +438,15 @@ var GLSlideshow = (function (_super) {
     GLSlideshow.prototype.render = function () {
         if (this._destroyed)
             return;
-        if (this._inTranstion) {
+        if (this._inTransition) {
             var transitionElapsedTime = Date.now() - this._transitionStartTime;
-            this._progress = this._inTranstion ? Math.min(transitionElapsedTime / this.duration, 1) : 0;
+            this._progress = this._inTransition ? Math.min(transitionElapsedTime / this.duration, 1) : 0;
             this._gl.uniform1f(this._uniformLocations.progress, this._progress);
             this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
             this._gl.drawArrays(this._gl.TRIANGLES, 0, 6);
             this._gl.flush();
             if (this._progress === 1) {
-                this._inTranstion = false;
+                this._inTransition = false;
                 this._hasUpdated = false;
                 this.dispatchEvent({ type: 'transitionEnd' });
             }
@@ -457,7 +462,7 @@ var GLSlideshow = (function (_super) {
     GLSlideshow.prototype.destory = function () {
         this._destroyed = true;
         this._isRunning = false;
-        this._inTranstion = false;
+        this._inTransition = false;
         this.setSize(1, 1);
         if (this._program) {
             this._gl.activeTexture(this._gl.TEXTURE0);

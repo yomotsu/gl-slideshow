@@ -12,7 +12,7 @@ export declare class GLSlideshow extends EventDispatcher {
     private _transitionStartTime;
     private _progress;
     private _isRunning;
-    private _inTranstion;
+    private _inTransition;
     private _hasUpdated;
     private _domElement;
     private _images;
@@ -34,8 +34,9 @@ export declare class GLSlideshow extends EventDispatcher {
     readonly currentIndex: number;
     readonly nextIndex: number;
     readonly prevIndex: number;
-    readonly inTranstion: boolean;
-    transition(to: number): void;
+    readonly length: number;
+    readonly inTransition: boolean;
+    to(to: number): void;
     play(): this;
     pause(): this;
     insert(image: ImageSource, order: number): void;
