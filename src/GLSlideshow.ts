@@ -23,9 +23,7 @@ const UV = new Float32Array( [
 export class GLSlideshow extends EventDispatcher {
 
 	static addShader( effectName: string, source: string, uniforms: Uniforms ) {
-		
 		addShader( effectName, source, uniforms );
-
 	}
 
 	duration: number = 1000;
@@ -38,9 +36,9 @@ export class GLSlideshow extends EventDispatcher {
 	private _transitionStartTime: number = 0;
 	private _progress: number = 0;
 	private _isRunning: boolean = true;
-	private _inTranstion: boolean = false;
+	private _inTransition: boolean = false;
 	private _hasUpdated: boolean = true;
-	private _domElement!: HTMLCanvasElement;
+	private _domElement: HTMLCanvasElement;
 	private _images: HTMLImageElement[] = [];
 	private _from!: Texture;
 	private _to!: Texture;
@@ -57,11 +55,11 @@ export class GLSlideshow extends EventDispatcher {
 		- 1,   1,
 	] );
 	private _gl: WebGLRenderingContext;
-	private _vertexShader!: WebGLShader;
+	private _vertexShader: WebGLShader;
 	private _fragmentShader!: WebGLShader | null;
 	private _program!: WebGLProgram | null;
-	private _vertexBuffer!: WebGLBuffer;
-	private _uvBuffer!: WebGLBuffer;
+	private _vertexBuffer: WebGLBuffer;
+	private _uvBuffer: WebGLBuffer;
 	private _uniformLocations!: {
 		progress       : WebGLUniformLocation | null,
 		resolution     : WebGLUniformLocation | null,
@@ -103,7 +101,7 @@ export class GLSlideshow extends EventDispatcher {
 
 			if ( this.interval + this.duration < this._elapsedTime ) {
 
-				this.transition( this.nextIndex );
+				this.to( this.nextIndex );
 				// transition start
 
 			}
@@ -129,25 +127,29 @@ export class GLSlideshow extends EventDispatcher {
 
 	get nextIndex(): number {
 
-		return ( this._currentIndex < this._images.length - 1 ) ? this._currentIndex + 1 : 0;
+		return ( this._currentIndex < this.length - 1 ) ? this._currentIndex + 1 : 0;
 
 	}
 
 	get prevIndex(): number {
 
-		return ( this._currentIndex !== 0 ) ? this._currentIndex - 1 : this._images.length;
+		return ( this._currentIndex !== 0 ) ? this._currentIndex - 1 : this.length - 1;
 
 	}
 
-	get inTranstion():boolean {
+	get length(): number {
 
-		return this._inTranstion;
+		return this._images.length;
 
 	}
 
-	transition( to: number ) {
+	get inTransition():boolean {
 
-		// if ( this._destroyed ) return;
+		return this._inTransition;
+
+	}
+
+	to( to: number ) {
 
 		this._from.setImage( this._images[ this._currentIndex ] );
 		this._to.setImage( this._images[ to ] );
@@ -155,7 +157,7 @@ export class GLSlideshow extends EventDispatcher {
 		this._transitionStartTime = Date.now();
 		this._startTime = Date.now();
 		this._currentIndex = to;
-		this._inTranstion = true;
+		this._inTransition = true;
 		this._hasUpdated = true;
 		this.dispatchEvent( { type: 'transitionStart' } );
 
@@ -218,7 +220,7 @@ export class GLSlideshow extends EventDispatcher {
 
 	remove( order: number ) {
 
-		if ( this._images.length === 1 ) return;
+		if ( this.length === 1 ) return;
 
 		this._images.splice( order, 1 );
 
@@ -226,28 +228,25 @@ export class GLSlideshow extends EventDispatcher {
 
 	replace( images: Images ) {
 
-		const length = this._images.length;
+		const length = this.length;
 
-		images.forEach( ( image ) => this.insert( image, this._images.length ) );
+		images.forEach( ( image ) => this.insert( image, this.length ) );
 
-		for ( let i = 0 | 0; i < length; i = ( i + 1 ) | 0 ) {
+		for ( let i = 0; i < length; i ++ ) {
 
 			this.remove( 0 );
 
 		}
 
 		this._hasUpdated = true;
-		this.transition( 0 );
+		this.to( 0 );
 
 	}
 
 	setEffect( effectName: string ) {
 
 		const shader = getShader( effectName );
-		const FSSource =
-			FRAGMENT_SHADER_SOURCE_HEAD +
-			shader.source +
-			FRAGMENT_SHADER_SOURCE_FOOT;
+		const FSSource = FRAGMENT_SHADER_SOURCE_HEAD + shader.source + FRAGMENT_SHADER_SOURCE_FOOT;
 		const uniforms = shader.uniforms;
 
 		if ( this._program ) {
@@ -299,8 +298,8 @@ export class GLSlideshow extends EventDispatcher {
 
 		}
 
-		this._from = new Texture( this._images[ this._currentIndex    ], this._gl );
-		this._to   = new Texture( this._images[ this.nextIndex ], this._gl );
+		this._from = new Texture( this._images[ this._currentIndex ], this._gl );
+		this._to   = new Texture( this._images[ this.nextIndex     ], this._gl );
 
 		this._from.addEventListener( 'updated', this._updateTexture.bind( this ) );
 		this._to.addEventListener( 'updated', this._updateTexture.bind( this ) );
@@ -350,10 +349,10 @@ export class GLSlideshow extends EventDispatcher {
 
 		if ( this._destroyed ) return;
 
-		if ( this._inTranstion ) {
+		if ( this._inTransition ) {
 
 			const transitionElapsedTime = Date.now() - this._transitionStartTime;
-			this._progress = this._inTranstion ? Math.min( transitionElapsedTime / this.duration, 1 ) : 0;
+			this._progress = this._inTransition ? Math.min( transitionElapsedTime / this.duration, 1 ) : 0;
 
 			// this.context.clearColor( 0, 0, 0, 1 );
 			this._gl.uniform1f( this._uniformLocations.progress, this._progress );
@@ -363,7 +362,7 @@ export class GLSlideshow extends EventDispatcher {
 
 			if ( this._progress === 1 ) {
 
-				this._inTranstion = false; // may move to tick()
+				this._inTransition = false; // may move to tick()
 				this._hasUpdated = false;
 				this.dispatchEvent( { type: 'transitionEnd' } );
 				// transitionEnd!
@@ -387,7 +386,7 @@ export class GLSlideshow extends EventDispatcher {
 
 		this._destroyed   = true;
 		this._isRunning   = false;
-		this._inTranstion = false;
+		this._inTransition = false;
 
 		this.setSize( 1, 1 );
 
