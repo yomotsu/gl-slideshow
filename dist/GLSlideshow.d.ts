@@ -8,7 +8,7 @@ export declare class GLSlideshow extends EventDispatcher {
     private _currentIndex;
     private _startTime;
     private _elapsedTime;
-    private _pauseStartTime;
+    private _pauseStartTime?;
     private _transitionStartTime;
     private _progress;
     private _isRunning;
@@ -30,12 +30,12 @@ export declare class GLSlideshow extends EventDispatcher {
     private _uvBuffer;
     private _uniformLocations;
     constructor(images: Images, options?: GLSlideshowOptions);
-    readonly domElement: HTMLCanvasElement;
-    readonly currentIndex: number;
-    readonly nextIndex: number;
-    readonly prevIndex: number;
-    readonly length: number;
-    readonly inTransition: boolean;
+    get domElement(): HTMLCanvasElement;
+    get currentIndex(): number;
+    get nextIndex(): number;
+    get prevIndex(): number;
+    get length(): number;
+    get inTransition(): boolean;
     to(to: number): void;
     play(): this;
     pause(): this;
@@ -43,9 +43,11 @@ export declare class GLSlideshow extends EventDispatcher {
     remove(order: number): void;
     replace(images: Images): void;
     setEffect(effectName: string): void;
+    updateAspect(imageAspect?: number): void;
     setSize(w: number, h: number): void;
     render(): void;
-    destory(): void;
+    destroy(): void;
     private _setUniform;
     private _updateTexture;
+    private _updateAspect;
 }
