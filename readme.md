@@ -11,6 +11,7 @@ Shaders are forked from https://gl-transitions.com/
 - [Basic](http://yomotsu.github.io/gl-slideshow/examples/basic.html)
 - [APIs](http://yomotsu.github.io/gl-slideshow/examples/apis.html)
 - [Responsive](http://yomotsu.github.io/gl-slideshow/examples/responsive.html)
+- [Responsive-breakpoint](http://yomotsu.github.io/gl-slideshow/examples/responsive-breakpoint.html)
 - [Cover scale](http://yomotsu.github.io/gl-slideshow/examples/cover.html)
 - [Custom shader](http://yomotsu.github.io/gl-slideshow/examples/shader.html)
 
@@ -99,7 +100,7 @@ For more detail, see [APIs example](http://yomotsu.github.io/GLSlideshow.js/exam
 - `instance.replace( images )`
 - `instance.to( to )`
 - `instance.setEffect( effectName [, uniforms ] )`
-- `instance.destory()`
+- `instance.destroy()`
 
 Editable params
 
@@ -117,8 +118,8 @@ Read only params
 
 Events
 
-- `instance.addEventListener( 'transitionStart', function () { /* callback */ } );`
-- `instance.addEventListener( 'transitionEnd',   function () { /* callback */ } );`
+- `instance.addEventListener( 'transitionStart', () => { /* callback */ } );`
+- `instance.addEventListener( 'transitionEnd',   () => { /* callback */ } );`
 
 Static methods
 

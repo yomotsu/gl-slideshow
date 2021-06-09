@@ -28,11 +28,11 @@ export class GLSlideshow extends EventDispatcher {
 
 	duration: number = 1000;
 	interval: number = 5000;
-	
+
 	private _currentIndex: number = 0;
 	private _startTime: number = 0;
 	private _elapsedTime: number = 0;
-	private _pauseStartTime: number = 0;
+	private _pauseStartTime?: number;
 	private _transitionStartTime: number = 0;
 	private _progress: number = 0;
 	private _isRunning: boolean = true;
@@ -45,13 +45,13 @@ export class GLSlideshow extends EventDispatcher {
 	private _resolution: Float32Array = new Float32Array( [ 0, 0 ] );
 	private _imageAspect: number;
 	private _destroyed: boolean = false;
-	
+
 	private _vertexes: Float32Array = new Float32Array( [
 		- 1, - 1,
-			1, - 1,
+		  1, - 1,
 		- 1,   1,
-			1, - 1,
-			1,   1,
+		  1, - 1,
+		  1,   1,
 		- 1,   1,
 	] );
 	private _gl: WebGLRenderingContext;
@@ -82,7 +82,7 @@ export class GLSlideshow extends EventDispatcher {
 		this._resolution[ 0 ] = options.width || this._domElement.width;
 		this._resolution[ 1 ] = options.height || this._domElement.height;
 		this._imageAspect = options.imageAspect || this._resolution[ 0 ] / this._resolution[ 1 ];
-		
+
 		this._gl = getWebglContext( this._domElement );
 		this._vertexBuffer = this._gl.createBuffer()!;
 		this._uvBuffer = this._gl.createBuffer()!;
@@ -167,7 +167,7 @@ export class GLSlideshow extends EventDispatcher {
 
 		if ( this._isRunning ) return this;
 
-		const pauseElapsedTime = Date.now() - this._pauseStartTime;
+		const pauseElapsedTime = Date.now() - ( this._pauseStartTime || 0 );
 		this._startTime += pauseElapsedTime;
 		this._isRunning = true;
 
@@ -310,13 +310,19 @@ export class GLSlideshow extends EventDispatcher {
 
 	}
 
+	updateAspect( imageAspect?: number ) {
+
+		this._imageAspect = imageAspect || this._resolution[ 0 ] / this._resolution[ 1 ];
+
+		// update vertex buffer
+		this._updateAspect();
+		this._hasUpdated = true;
+
+	}
+
 	setSize( w: number, h: number ) {
 
 		if ( this._domElement.width  === w && this._domElement.height === h ) return;
-
-		this._domElement.width  = w;
-		this._domElement.height = h;
-		this._hasUpdated = true;
 
 		this._domElement.width  = w;
 		this._domElement.height = h;
@@ -326,21 +332,7 @@ export class GLSlideshow extends EventDispatcher {
 		this._gl.uniform2fv( this._uniformLocations.resolution, this._resolution );
 
 		// update vertex buffer
-		const canvasAspect = this._resolution[ 0 ] / this._resolution[ 1 ];
-		const aspect = this._imageAspect / canvasAspect;
-		const posX = aspect < 1 ? 1.0 : aspect;
-		const posY = aspect > 1 ? 1.0 : canvasAspect / this._imageAspect;
-
-		this._vertexes[  0 ] = - posX; this._vertexes[  1 ] = - posY;
-		this._vertexes[  2 ] =   posX; this._vertexes[  3 ] = - posY;
-		this._vertexes[  4 ] = - posX; this._vertexes[  5 ] =   posY;
-		this._vertexes[  6 ] =   posX; this._vertexes[  7 ] = - posY;
-		this._vertexes[  8 ] =   posX; this._vertexes[  9 ] =   posY;
-		this._vertexes[ 10 ] = - posX; this._vertexes[ 11 ] =   posY;
-
-		this._gl.bindBuffer( this._gl.ARRAY_BUFFER, this._vertexBuffer );
-		this._gl.bufferData( this._gl.ARRAY_BUFFER, this._vertexes, this._gl.STATIC_DRAW );
-
+		this._updateAspect();
 		this._hasUpdated = true;
 
 	}
@@ -370,7 +362,7 @@ export class GLSlideshow extends EventDispatcher {
 			}
 
 		} else {
-			
+
 			// this.context.clearColor( 0, 0, 0, 1 );
 			this._gl.uniform1f( this._uniformLocations.progress, this._progress );
 			this._gl.clear( this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT );
@@ -382,7 +374,7 @@ export class GLSlideshow extends EventDispatcher {
 
 	}
 
-	destory() {
+	destroy() {
 
 		this._destroyed   = true;
 		this._isRunning   = false;
@@ -418,10 +410,6 @@ export class GLSlideshow extends EventDispatcher {
 			this._domElement.parentNode.removeChild( this._domElement );
 
 		}
-
-		delete this._from;
-		delete this._to;
-		delete this._domElement;
 
 	}
 
@@ -466,6 +454,26 @@ export class GLSlideshow extends EventDispatcher {
 		this._gl.uniform1i( this._uniformLocations.to, 1 );
 
 		this._hasUpdated = true;
+
+	}
+
+	private _updateAspect() {
+
+		// update vertex buffer
+		const canvasAspect = this._resolution[ 0 ] / this._resolution[ 1 ];
+		const aspect = this._imageAspect / canvasAspect;
+		const posX = aspect < 1 ? 1.0 : aspect;
+		const posY = aspect > 1 ? 1.0 : canvasAspect / this._imageAspect;
+
+		this._vertexes[  0 ] = - posX; this._vertexes[  1 ] = - posY;
+		this._vertexes[  2 ] =   posX; this._vertexes[  3 ] = - posY;
+		this._vertexes[  4 ] = - posX; this._vertexes[  5 ] =   posY;
+		this._vertexes[  6 ] =   posX; this._vertexes[  7 ] = - posY;
+		this._vertexes[  8 ] =   posX; this._vertexes[  9 ] =   posY;
+		this._vertexes[ 10 ] = - posX; this._vertexes[ 11 ] =   posY;
+
+		this._gl.bindBuffer( this._gl.ARRAY_BUFFER, this._vertexBuffer );
+		this._gl.bufferData( this._gl.ARRAY_BUFFER, this._vertexes, this._gl.STATIC_DRAW );
 
 	}
 

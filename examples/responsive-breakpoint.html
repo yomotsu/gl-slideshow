@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>=^.^=</title>
+<style>
+#myCanvas{
+	display: block;
+	width: 100%;
+	height: auto;
+	margin: 0 auto;
+}
+</style>
+</head>
+<body>
+<div><a href="https://github.com/yomotsu/GLSlideshow">GitHub repo</a></div>
+<div>Try to resize the window</div>
+
+<div id="container">
+	<canvas id="myCanvas"></canvas>
+</div>
+
+<script src="../dist/gl-slideshow.js"></script>
+<script>
+const mediaQueryList = window.matchMedia( '(max-width: 680px)' );
+const container = document.getElementById( 'container' );
+const srcListL = [ './img/1.jpg',  './img/2.jpg',  './img/3.jpg',  './img/4.jpg' ];
+const srcListS = [ './img/1s.jpg', './img/2s.jpg', './img/3s.jpg', './img/4s.jpg' ];
+
+const srcList = mediaQueryList.matches ? srcListS : srcListL;
+
+loadImgList( srcList ).then( ( imgList ) => {
+
+	const slideshow = new GLSlideshow(
+		mediaQueryList.matches ? srcListS : srcListL,
+		{
+			canvas: document.getElementById( 'myCanvas' ),
+			width: mediaQueryList.matches ? 375 : 1024,
+			height: mediaQueryList.matches ? 300 : 576,
+			effect: 'crossZoom',
+		}
+	);
+
+	mediaQueryList.addEventListener( 'change', () => {
+
+		const isSmallScreen = mediaQueryList.matches;
+		const srcList = mediaQueryList.matches ? srcListS : srcListL;
+		const width = isSmallScreen ? 375 : 1024;
+		const height = isSmallScreen ? 300 : 576;
+
+		loadImgList( srcList ).then( ( imgList ) => {
+
+			slideshow.replace( imgList );
+			slideshow.setSize( width, height );
+			slideshow.updateAspect();
+
+		} );
+
+	} );
+
+} );
+
+
+function loadImgList( srcList ) {
+
+	return new Promise( ( resolve ) => {
+
+		Promise.all( srcList.map( ( src ) => loadImg( src ) ) ).then( ( imgList ) => {
+
+			resolve( imgList );
+
+		} );
+
+	} );
+
+}
+
+
+function loadImg( src ) {
+
+	return new Promise( ( resolve ) => {
+
+		const $img = new Image();
+		const onLoad = () => {
+
+			$img.removeEventListener( 'load', onLoad );
+			resolve( $img );
+
+		};
+		$img.addEventListener( 'load', onLoad );
+		$img.src = src;
+
+	} );
+
+}
+</script>
+</body>
+</html>
