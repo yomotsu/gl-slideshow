@@ -22,3 +22,9 @@ export function ceilPowerOfTwo( value: number ): number {
 	return Math.pow( 2, Math.ceil( Math.log( value ) / Math.LN2 ) );
 
 }
+
+export function isPowerOfTwo( value: number ): boolean {
+
+	return ( value & ( value - 1 ) ) === 0 && value !== 0;
+
+}

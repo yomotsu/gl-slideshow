@@ -1,5 +1,6 @@
 import type { TextureSource } from './types';
 import { EventDispatcher } from './EventDispatcher';
+import { isPowerOfTwo } from './webglUtils';
 
 const defaultImage = document.createElement( 'canvas' );
 defaultImage.width = 2;
@@ -95,13 +96,19 @@ export class Texture extends EventDispatcher {
 
 		}
 
+		const width  = this.image instanceof HTMLImageElement ? this.image.naturalWidth  : this.image.width;
+		const height = this.image instanceof HTMLImageElement ? this.image.naturalHeight : this.image.height;
+		const isPowerOfTwoSize = isPowerOfTwo( width ) && isPowerOfTwo( height );
+
 		_gl.bindTexture( _gl.TEXTURE_2D, this.texture );
-		_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, + true );
+		_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, true );
+		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, isPowerOfTwoSize ? _gl.NEAREST_MIPMAP_LINEAR : _gl.LINEAR );
 		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MAG_FILTER, _gl.LINEAR );
-		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, _gl.LINEAR );
 		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_WRAP_S, _gl.CLAMP_TO_EDGE );
 		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_WRAP_T, _gl.CLAMP_TO_EDGE );
 		_gl.texImage2D( _gl.TEXTURE_2D, 0, _gl.RGBA, _gl.RGBA, _gl.UNSIGNED_BYTE, _image );
+
+		if ( isPowerOfTwoSize ) _gl.generateMipmap( _gl.TEXTURE_2D );
 		_gl.bindTexture( _gl.TEXTURE_2D, null );
 
 		this.dispatchEvent( { type: 'updated' } );
