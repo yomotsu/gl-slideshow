@@ -1,8 +1,9 @@
-import { ImageSource, Images, GLSlideshowOptions } from './types';
+import type { ImageSource, Images, GLSlideshowOptions } from './types';
 import { EventDispatcher } from './EventDispatcher';
 import { Uniforms } from './shaderLib';
 export declare class GLSlideshow extends EventDispatcher {
     static addShader(effectName: string, source: string, uniforms: Uniforms): void;
+    static convertPowerOfTwo(image: HTMLImageElement): HTMLCanvasElement;
     duration: number;
     interval: number;
     private _currentIndex;

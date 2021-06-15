@@ -8,4 +8,5 @@ interface ContextAttributes {
     powerPreference?: boolean;
 }
 export declare function getWebglContext(canvas: HTMLCanvasElement, contextAttributes?: ContextAttributes): WebGLRenderingContext;
+export declare function ceilPowerOfTwo(value: number): number;
 export {};

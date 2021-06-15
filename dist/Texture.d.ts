@@ -1,10 +1,11 @@
+import type { TextureSource } from './types';
 import { EventDispatcher } from './EventDispatcher';
 export declare class Texture extends EventDispatcher {
-    image: HTMLImageElement;
+    image: TextureSource;
     gl: WebGLRenderingContext;
     texture: WebGLTexture;
-    constructor(image: HTMLImageElement, gl: WebGLRenderingContext);
+    constructor(image: TextureSource, gl: WebGLRenderingContext);
     isLoaded(): boolean;
     onload(): void;
-    setImage(image: HTMLImageElement): void;
+    setImage(image: TextureSource): void;
 }

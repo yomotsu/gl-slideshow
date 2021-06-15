@@ -84,6 +84,9 @@
 	    return (canvas.getContext('webgl', contextAttributes) ||
 	        canvas.getContext('experimental-webgl', contextAttributes));
 	}
+	function ceilPowerOfTwo(value) {
+	    return Math.pow(2, Math.ceil(Math.log(value) / Math.LN2));
+	}
 
 	var defaultImage = document.createElement('canvas');
 	defaultImage.width = 2;
@@ -101,6 +104,8 @@
 	        return _this;
 	    }
 	    Texture.prototype.isLoaded = function () {
+	        if (this.image instanceof HTMLCanvasElement)
+	            return true;
 	        return this.image.naturalWidth !== 0;
 	    };
 	    Texture.prototype.onload = function () {
@@ -259,6 +264,20 @@
 	    GLSlideshow.addShader = function (effectName, source, uniforms) {
 	        addShader(effectName, source, uniforms);
 	    };
+	    GLSlideshow.convertPowerOfTwo = function (image) {
+	        var _a;
+	        var $canvas = document.createElement('canvas');
+	        if (image.naturalWidth === 0) {
+	            console.warn('Image must be loaded before converting');
+	            return $canvas;
+	        }
+	        var width = ceilPowerOfTwo(image.naturalWidth);
+	        var height = ceilPowerOfTwo(image.naturalHeight);
+	        $canvas.width = width;
+	        $canvas.height = height;
+	        (_a = $canvas.getContext('2d')) === null || _a === void 0 ? void 0 : _a.drawImage(image, 0, 0, width, height);
+	        return $canvas;
+	    };
 	    Object.defineProperty(GLSlideshow.prototype, "domElement", {
 	        get: function () {
 	            return this._domElement;
@@ -335,7 +354,10 @@
 	            _this._hasUpdated = true;
 	            event.target.removeEventListener('load', onload);
 	        };
-	        if (image instanceof Image) {
+	        if (image instanceof HTMLCanvasElement) {
+	            this._hasUpdated = true;
+	        }
+	        else if (image instanceof HTMLImageElement) {
 	            image.addEventListener('load', onload);
 	        }
 	        else if (typeof image === 'string') {
