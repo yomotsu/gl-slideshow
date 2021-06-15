@@ -1,4 +1,5 @@
-export type ImageSource = string | HTMLImageElement;
+export type TextureSource = HTMLImageElement | HTMLCanvasElement;
+export type ImageSource = string | TextureSource;
 export type Images = ImageSource[];
 
 export interface GLSlideshowOptions {

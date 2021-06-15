@@ -1,6 +1,6 @@
-import { ImageSource, Images, GLSlideshowOptions } from './types';
+import type { TextureSource, ImageSource, Images, GLSlideshowOptions } from './types';
 import { EventDispatcher } from './EventDispatcher';
-import { getWebglContext } from './webglUtils';
+import { getWebglContext, ceilPowerOfTwo } from './webglUtils';
 import { Texture } from './Texture';
 import {
 	Uniforms,
@@ -22,8 +22,29 @@ const UV = new Float32Array( [
 
 export class GLSlideshow extends EventDispatcher {
 
-	static addShader( effectName: string, source: string, uniforms: Uniforms ) {
+	static addShader( effectName: string, source: string, uniforms: Uniforms ): void {
 		addShader( effectName, source, uniforms );
+	}
+
+	static convertPowerOfTwo( image: HTMLImageElement ): HTMLCanvasElement {
+
+		const $canvas = document.createElement( 'canvas' );
+
+		if ( image.naturalWidth === 0 ) {
+
+			console.warn( 'Image must be loaded before converting' );
+			return $canvas;
+
+		}
+
+		const width = ceilPowerOfTwo( image.naturalWidth );
+		const height = ceilPowerOfTwo( image.naturalHeight );
+		$canvas.width = width;
+		$canvas.height = height;
+
+		$canvas.getContext( '2d' )?.drawImage( image, 0, 0, width, height );
+		return $canvas;
+
 	}
 
 	duration: number = 1000;
@@ -39,7 +60,7 @@ export class GLSlideshow extends EventDispatcher {
 	private _inTransition: boolean = false;
 	private _hasUpdated: boolean = true;
 	private _domElement: HTMLCanvasElement;
-	private _images: HTMLImageElement[] = [];
+	private _images: TextureSource[] = [];
 	private _from!: Texture;
 	private _to!: Texture;
 	private _resolution: Float32Array = new Float32Array( [ 0, 0 ] );
@@ -197,7 +218,11 @@ export class GLSlideshow extends EventDispatcher {
 
 		};
 
-		if ( image instanceof Image ) {
+		if ( image instanceof HTMLCanvasElement ) {
+
+			this._hasUpdated = true;
+
+		} else if ( image instanceof HTMLImageElement ) {
 
 			image.addEventListener( 'load', onload );
 

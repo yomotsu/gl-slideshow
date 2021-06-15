@@ -1,3 +1,4 @@
+import type { TextureSource } from './types';
 import { EventDispatcher } from './EventDispatcher';
 
 const defaultImage = document.createElement( 'canvas' );
@@ -14,11 +15,11 @@ defaultImage.height = 2;
 
 export class Texture extends EventDispatcher {
 
-	image: HTMLImageElement;
+	image: TextureSource;
 	gl: WebGLRenderingContext;
 	texture: WebGLTexture;
 
-	constructor( image: HTMLImageElement, gl: WebGLRenderingContext ) {
+	constructor( image: TextureSource, gl: WebGLRenderingContext ) {
 
 		super();
 
@@ -42,13 +43,14 @@ export class Texture extends EventDispatcher {
 
 	}
 
-	isLoaded() {
+	isLoaded(): boolean {
 
+		if ( this.image instanceof HTMLCanvasElement ) return true;
 		return this.image.naturalWidth !== 0;
 
 	}
 
-	onload() {
+	onload(): void {
 
 		const onload = () => {
 
@@ -68,7 +70,7 @@ export class Texture extends EventDispatcher {
 
 	}
 
-	setImage( image: HTMLImageElement ) {
+	setImage( image: TextureSource ): void {
 
 		const _gl = this.gl;
 		let _image;

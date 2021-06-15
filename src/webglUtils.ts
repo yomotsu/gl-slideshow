@@ -16,3 +16,9 @@ export function getWebglContext( canvas: HTMLCanvasElement, contextAttributes?: 
 	) as WebGLRenderingContext;
 
 }
+
+export function ceilPowerOfTwo( value: number ): number {
+
+	return Math.pow( 2, Math.ceil( Math.log( value ) / Math.LN2 ) );
+
+}
