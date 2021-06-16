@@ -8,6 +8,7 @@ interface ContextAttributes {
     powerPreference?: boolean;
 }
 export declare function getWebglContext(canvas: HTMLCanvasElement, contextAttributes?: ContextAttributes): WebGLRenderingContext;
+export declare const MAX_TEXTURE_SIZE: any;
 export declare function ceilPowerOfTwo(value: number): number;
 export declare function isPowerOfTwo(value: number): boolean;
 export {};

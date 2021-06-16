@@ -78,6 +78,15 @@ function getWebglContext(canvas, contextAttributes) {
     return (canvas.getContext('webgl', contextAttributes) ||
         canvas.getContext('experimental-webgl', contextAttributes));
 }
+var MAX_TEXTURE_SIZE = (function () {
+    var $canvas = document.createElement('canvas');
+    var gl = getWebglContext($canvas);
+    var MAX_TEXTURE_SIZE = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+    var ext = gl.getExtension('WEBGL_lose_context');
+    if (ext)
+        ext.loseContext();
+    return MAX_TEXTURE_SIZE;
+})();
 function ceilPowerOfTwo(value) {
     return Math.pow(2, Math.ceil(Math.log(value) / Math.LN2));
 }
@@ -137,7 +146,7 @@ var Texture = (function (_super) {
         var isPowerOfTwoSize = isPowerOfTwo(width) && isPowerOfTwo(height);
         _gl.bindTexture(_gl.TEXTURE_2D, this.texture);
         _gl.pixelStorei(_gl.UNPACK_FLIP_Y_WEBGL, true);
-        _gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, isPowerOfTwoSize ? _gl.NEAREST_MIPMAP_LINEAR : _gl.LINEAR);
+        _gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, isPowerOfTwoSize ? _gl.LINEAR_MIPMAP_NEAREST : _gl.LINEAR);
         _gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_MAG_FILTER, _gl.LINEAR);
         _gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_WRAP_S, _gl.CLAMP_TO_EDGE);
         _gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_WRAP_T, _gl.CLAMP_TO_EDGE);
@@ -273,8 +282,8 @@ var GLSlideshow = (function (_super) {
             console.warn('Image must be loaded before converting');
             return $canvas;
         }
-        var width = ceilPowerOfTwo(image.naturalWidth);
-        var height = ceilPowerOfTwo(image.naturalHeight);
+        var width = Math.min(ceilPowerOfTwo(image.naturalWidth), MAX_TEXTURE_SIZE);
+        var height = Math.min(ceilPowerOfTwo(image.naturalHeight), MAX_TEXTURE_SIZE);
         $canvas.width = width;
         $canvas.height = height;
         (_a = $canvas.getContext('2d')) === null || _a === void 0 ? void 0 : _a.drawImage(image, 0, 0, width, height);
