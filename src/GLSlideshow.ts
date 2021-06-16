@@ -1,6 +1,6 @@
 import type { TextureSource, ImageSource, Images, GLSlideshowOptions } from './types';
 import { EventDispatcher } from './EventDispatcher';
-import { getWebglContext, ceilPowerOfTwo } from './webglUtils';
+import { MAX_TEXTURE_SIZE, getWebglContext, ceilPowerOfTwo } from './webglUtils';
 import { Texture } from './Texture';
 import {
 	Uniforms,
@@ -37,8 +37,8 @@ export class GLSlideshow extends EventDispatcher {
 
 		}
 
-		const width = ceilPowerOfTwo( image.naturalWidth );
-		const height = ceilPowerOfTwo( image.naturalHeight );
+		const width = Math.min( ceilPowerOfTwo( image.naturalWidth ), MAX_TEXTURE_SIZE );
+		const height = Math.min( ceilPowerOfTwo( image.naturalHeight ), MAX_TEXTURE_SIZE );
 		$canvas.width = width;
 		$canvas.height = height;
 
@@ -409,6 +409,7 @@ export class GLSlideshow extends EventDispatcher {
 
 		if ( this._program ) {
 
+			// https://stackoverflow.com/a/23606581/1512272
 			this._gl.activeTexture( this._gl.TEXTURE0 );
 			this._gl.bindTexture( this._gl.TEXTURE_2D, null );
 			this._gl.activeTexture( this._gl.TEXTURE1 );
