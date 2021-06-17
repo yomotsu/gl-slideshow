@@ -1,6 +1,6 @@
 import type { TextureSource, ImageSource, Images, GLSlideshowOptions } from './types';
 import { EventDispatcher } from './EventDispatcher';
-import { MAX_TEXTURE_SIZE, getWebglContext, ceilPowerOfTwo } from './webglUtils';
+import { MAX_TEXTURE_SIZE, getWebglContext, ceilPowerOfTwo, isPowerOfTwo } from './webgl-utils';
 import { Texture } from './Texture';
 import {
 	Uniforms,
@@ -9,7 +9,7 @@ import {
 	FRAGMENT_SHADER_SOURCE_FOOT,
 	getShader,
 	addShader,
-} from './shaderLib';
+} from './shader-lib';
 
 const UV = new Float32Array( [
 	0.0, 0.0,
@@ -26,19 +26,21 @@ export class GLSlideshow extends EventDispatcher {
 		addShader( effectName, source, uniforms );
 	}
 
-	static convertPowerOfTwo( image: HTMLImageElement ): HTMLCanvasElement {
+	static convertPowerOfTwo( image: HTMLImageElement ): TextureSource {
 
 		const $canvas = document.createElement( 'canvas' );
 
 		if ( image.naturalWidth === 0 ) {
 
 			console.warn( 'Image must be loaded before converting' );
-			return $canvas;
+			return image;
 
 		}
 
 		const width = Math.min( ceilPowerOfTwo( image.naturalWidth ), MAX_TEXTURE_SIZE );
 		const height = Math.min( ceilPowerOfTwo( image.naturalHeight ), MAX_TEXTURE_SIZE );
+
+		if ( isPowerOfTwo( width ) && isPowerOfTwo( height ) ) return image;
 		$canvas.width = width;
 		$canvas.height = height;
 
@@ -218,11 +220,7 @@ export class GLSlideshow extends EventDispatcher {
 
 		};
 
-		if ( image instanceof HTMLCanvasElement ) {
-
-			this._hasUpdated = true;
-
-		} else if ( image instanceof HTMLImageElement ) {
+		if ( image instanceof HTMLImageElement && image.naturalWidth !== 0 ) {
 
 			image.addEventListener( 'load', onload );
 
@@ -335,7 +333,7 @@ export class GLSlideshow extends EventDispatcher {
 
 	}
 
-	updateAspect( imageAspect?: number ) {
+	updateImageAspect( imageAspect?: number ) {
 
 		this._imageAspect = imageAspect || this._resolution[ 0 ] / this._resolution[ 1 ];
 
@@ -371,7 +369,7 @@ export class GLSlideshow extends EventDispatcher {
 			const transitionElapsedTime = Date.now() - this._transitionStartTime;
 			this._progress = this._inTransition ? Math.min( transitionElapsedTime / this.duration, 1 ) : 0;
 
-			// this.context.clearColor( 0, 0, 0, 1 );
+			// this._gl.clearColor( 0, 0, 0, 1 );
 			this._gl.uniform1f( this._uniformLocations.progress, this._progress );
 			this._gl.clear( this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT );
 			this._gl.drawArrays( this._gl.TRIANGLES, 0, 6 );
@@ -388,7 +386,7 @@ export class GLSlideshow extends EventDispatcher {
 
 		} else {
 
-			// this.context.clearColor( 0, 0, 0, 1 );
+			// this._gl.clearColor( 0, 0, 0, 1 );
 			this._gl.uniform1f( this._uniformLocations.progress, this._progress );
 			this._gl.clear( this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT );
 			this._gl.drawArrays( this._gl.TRIANGLES, 0, 6 );

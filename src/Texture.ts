@@ -1,6 +1,6 @@
 import type { TextureSource } from './types';
 import { EventDispatcher } from './EventDispatcher';
-import { isPowerOfTwo } from './webglUtils';
+import { isPowerOfTwo } from './webgl-utils';
 
 const defaultImage = document.createElement( 'canvas' );
 defaultImage.width = 2;
