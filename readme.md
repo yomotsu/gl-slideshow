@@ -14,6 +14,7 @@ Shaders are forked from https://gl-transitions.com/
 - [Responsive-breakpoint](http://yomotsu.github.io/gl-slideshow/examples/responsive-breakpoint.html)
 - [Cover scale](http://yomotsu.github.io/gl-slideshow/examples/cover.html)
 - [Custom shader](http://yomotsu.github.io/gl-slideshow/examples/shader.html)
+- [Custom shader w/ additional texture](http://yomotsu.github.io/gl-slideshow/examples/shader-image.html)
 
 ## Usage
 

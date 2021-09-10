@@ -68,6 +68,7 @@ export class GLSlideshow extends EventDispatcher {
 	private _resolution: Float32Array = new Float32Array( [ 0, 0 ] );
 	private _imageAspect: number;
 	private _destroyed: boolean = false;
+	private _extraTextures: Texture[] = [];
 
 	private _vertexes: Float32Array = new Float32Array( [
 		- 1, - 1,
@@ -279,6 +280,9 @@ export class GLSlideshow extends EventDispatcher {
 			this._gl.deleteShader( this._fragmentShader );
 			this._gl.deleteProgram( this._program );
 
+			this._extraTextures.forEach( ( texture ) => this._gl.deleteTexture( texture ) );
+			this._extraTextures.length = 0;
+
 		}
 
 		this._fragmentShader = this._gl.createShader( this._gl.FRAGMENT_SHADER )!;
@@ -311,7 +315,7 @@ export class GLSlideshow extends EventDispatcher {
 			progress   : this._gl.getUniformLocation( this._program, 'progress' ),
 			resolution : this._gl.getUniformLocation( this._program, 'resolution' ),
 			from       : this._gl.getUniformLocation( this._program, 'from' ),
-			to         : this._gl.getUniformLocation( this._program, 'to' )
+			to         : this._gl.getUniformLocation( this._program, 'to' ),
 		};
 
 		for ( const i in uniforms ) {
@@ -321,7 +325,11 @@ export class GLSlideshow extends EventDispatcher {
 
 		}
 
+
+		this._gl.activeTexture( this._gl.TEXTURE0 );
 		this._from = new Texture( this._images[ this._currentIndex ], this._gl );
+
+		this._gl.activeTexture( this._gl.TEXTURE1 );
 		this._to   = new Texture( this._images[ this.nextIndex     ], this._gl );
 
 		this._from.addEventListener( 'updated', this._updateTexture.bind( this ) );
@@ -412,6 +420,14 @@ export class GLSlideshow extends EventDispatcher {
 			this._gl.bindTexture( this._gl.TEXTURE_2D, null );
 			this._gl.activeTexture( this._gl.TEXTURE1 );
 			this._gl.bindTexture( this._gl.TEXTURE_2D, null );
+			this._gl.activeTexture( this._gl.TEXTURE2 );
+			this._gl.bindTexture( this._gl.TEXTURE_2D, null );
+			this._gl.activeTexture( this._gl.TEXTURE3 );
+			this._gl.bindTexture( this._gl.TEXTURE_2D, null );
+			this._gl.activeTexture( this._gl.TEXTURE4 );
+			this._gl.bindTexture( this._gl.TEXTURE_2D, null );
+			this._gl.activeTexture( this._gl.TEXTURE5 );
+			this._gl.bindTexture( this._gl.TEXTURE_2D, null );
 			this._gl.bindBuffer( this._gl.ARRAY_BUFFER, null );
 			// this.gl.bindBuffer( this.gl.ELEMENT_ARRAY_BUFFER, null );
 			// this.gl.bindRenderbuffer( this.gl.RENDERBUFFER, null );
@@ -419,6 +435,8 @@ export class GLSlideshow extends EventDispatcher {
 
 			this._gl.deleteTexture( this._from.texture );
 			this._gl.deleteTexture( this._to.texture );
+			this._extraTextures.forEach( ( texture ) => this._gl.deleteTexture( texture ) );
+			this._extraTextures.length = 0;
 			this._gl.deleteBuffer( this._vertexBuffer );
 			this._gl.deleteBuffer( this._uvBuffer );
 			// this.context.deleteRenderbuffer( ... );
@@ -437,7 +455,7 @@ export class GLSlideshow extends EventDispatcher {
 
 	}
 
-	private _setUniform( key: string, value: number | number[] ) {
+	private _setUniform( key: string, value: number | number[] | HTMLImageElement ) {
 
 		if ( ! this._program ) return;
 
@@ -462,6 +480,24 @@ export class GLSlideshow extends EventDispatcher {
 
 			// vec4
 			this._gl.uniform4f( uniformLocation, value[ 0 ], value[ 1 ], value[ 2 ], value[ 3 ] );
+
+		} else if ( value instanceof HTMLImageElement ) {
+
+			// 0 and 1 are occupied. start from 2.
+			const textureUnit =
+				this._extraTextures.length === 0 ? this._gl.TEXTURE2:
+				this._extraTextures.length === 1 ? this._gl.TEXTURE3:
+				this._extraTextures.length === 2 ? this._gl.TEXTURE4:
+				this._extraTextures.length === 3 ? this._gl.TEXTURE5:
+				null;
+
+			if ( ! textureUnit ) return;
+
+			this._gl.activeTexture( textureUnit );
+			const texture = new Texture( value, this._gl );
+			this._gl.bindTexture( this._gl.TEXTURE_2D, texture.texture );
+			this._extraTextures.push( texture );
+			this._gl.uniform1i( uniformLocation, 1 + this._extraTextures.length ); // start from 2
 
 		}
 

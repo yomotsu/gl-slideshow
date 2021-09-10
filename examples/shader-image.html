@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>=^.^=</title>
+</head>
+<body>
+<div><a href="https://github.com/yomotsu/GLSlideshow">GitHub repo</a></div>
+
+<canvas id="myCanvas"></canvas>
+
+<script src="../dist/gl-slideshow.js"></script>
+<script>
+
+const shader = /* glsl */`
+	uniform float smoothness; // = 0.3
+	uniform sampler2D noiseImage;
+
+	vec4 transition (vec2 uv) {
+		vec4 xxx = texture2D(noiseImage, uv);
+		float alpha = smoothstep( 0.0, 0.25, clamp( texture2D( noiseImage, uv ).r - 1.0 + progress, 0.0, 1.0 ) );
+		return mix( getFromColor( uv ), getToColor( uv ), alpha );
+	}
+`;
+
+( async() => {
+
+	const noiseImage = await imageLoader( './img/noise.jpg' );
+
+	const uniforms = {
+		smoothness: 0.3,
+		noiseImage: noiseImage,
+	};
+
+	GLSlideshow.addShader( 'myShader', shader, uniforms );
+
+	var slideshow = new GLSlideshow(
+		[ './img/1.jpg', './img/2.jpg', './img/3.jpg', './img/4.jpg' ],
+		{
+			canvas: document.getElementById( 'myCanvas' ), // optional
+			width: 1024,        // optional
+			height: 576,        // optional
+			duration: 1000,     // optional
+			interval: 2000,     // optional
+			effect: 'myShader'
+		}
+	);
+
+} )();
+
+function imageLoader( src ) {
+
+	return new Promise( ( resolve ) => {
+		const image = new Image();
+		const onLoad = () => {
+
+			image.removeEventListener( 'load', onLoad );
+			resolve( image );
+
+		}
+		image.addEventListener( 'load', onLoad );
+		image.src = src;
+
+	} );
+
+}
+</script>
+
+</body>
+</html>
