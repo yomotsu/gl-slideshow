@@ -13,11 +13,9 @@
 <script>
 
 const shader = /* glsl */`
-	uniform float smoothness; // = 0.3
 	uniform sampler2D noiseImage;
 
 	vec4 transition (vec2 uv) {
-		vec4 xxx = texture2D(noiseImage, uv);
 		float alpha = smoothstep( 0.0, 0.25, clamp( texture2D( noiseImage, uv ).r - 1.0 + progress, 0.0, 1.0 ) );
 		return mix( getFromColor( uv ), getToColor( uv ), alpha );
 	}
