@@ -240,6 +240,7 @@
 	        _this._images = [];
 	        _this._resolution = new Float32Array([0, 0]);
 	        _this._destroyed = false;
+	        _this._extraTextures = [];
 	        _this._vertexes = new Float32Array([
 	            -1, -1,
 	            1, -1,
@@ -286,10 +287,12 @@
 	        var $canvas = document.createElement('canvas');
 	        if (image.naturalWidth === 0) {
 	            console.warn('Image must be loaded before converting');
-	            return $canvas;
+	            return image;
 	        }
 	        var width = Math.min(ceilPowerOfTwo(image.naturalWidth), MAX_TEXTURE_SIZE);
 	        var height = Math.min(ceilPowerOfTwo(image.naturalHeight), MAX_TEXTURE_SIZE);
+	        if (isPowerOfTwo(width) && isPowerOfTwo(height))
+	            return image;
 	        $canvas.width = width;
 	        $canvas.height = height;
 	        (_a = $canvas.getContext('2d')) === null || _a === void 0 ? void 0 : _a.drawImage(image, 0, 0, width, height);
@@ -371,10 +374,7 @@
 	            _this._hasUpdated = true;
 	            event.target.removeEventListener('load', onload);
 	        };
-	        if (image instanceof HTMLCanvasElement) {
-	            this._hasUpdated = true;
-	        }
-	        else if (image instanceof HTMLImageElement) {
+	        if (image instanceof HTMLImageElement && image.naturalWidth !== 0) {
 	            image.addEventListener('load', onload);
 	        }
 	        else if (typeof image === 'string') {
@@ -404,6 +404,7 @@
 	        this.to(0);
 	    };
 	    GLSlideshow.prototype.setEffect = function (effectName) {
+	        var _this = this;
 	        var shader = getShader(effectName);
 	        var FSSource = FRAGMENT_SHADER_SOURCE_HEAD + shader.source + FRAGMENT_SHADER_SOURCE_FOOT;
 	        var uniforms = shader.uniforms;
@@ -412,6 +413,8 @@
 	            this._gl.deleteTexture(this._to.texture);
 	            this._gl.deleteShader(this._fragmentShader);
 	            this._gl.deleteProgram(this._program);
+	            this._extraTextures.forEach(function (texture) { return _this._gl.deleteTexture(texture); });
+	            this._extraTextures.length = 0;
 	        }
 	        this._fragmentShader = this._gl.createShader(this._gl.FRAGMENT_SHADER);
 	        this._gl.shaderSource(this._fragmentShader, FSSource);
@@ -435,13 +438,15 @@
 	            progress: this._gl.getUniformLocation(this._program, 'progress'),
 	            resolution: this._gl.getUniformLocation(this._program, 'resolution'),
 	            from: this._gl.getUniformLocation(this._program, 'from'),
-	            to: this._gl.getUniformLocation(this._program, 'to')
+	            to: this._gl.getUniformLocation(this._program, 'to'),
 	        };
 	        for (var i in uniforms) {
 	            this._uniformLocations[i] = this._gl.getUniformLocation(this._program, i);
 	            this._setUniform(i, uniforms[i]);
 	        }
+	        this._gl.activeTexture(this._gl.TEXTURE0);
 	        this._from = new Texture(this._images[this._currentIndex], this._gl);
+	        this._gl.activeTexture(this._gl.TEXTURE1);
 	        this._to = new Texture(this._images[this.nextIndex], this._gl);
 	        this._from.addEventListener('updated', this._updateTexture.bind(this));
 	        this._to.addEventListener('updated', this._updateTexture.bind(this));
@@ -449,7 +454,7 @@
 	        this.setSize(this._resolution[0], this._resolution[1]);
 	        this._updateTexture();
 	    };
-	    GLSlideshow.prototype.updateAspect = function (imageAspect) {
+	    GLSlideshow.prototype.updateImageAspect = function (imageAspect) {
 	        this._imageAspect = imageAspect || this._resolution[0] / this._resolution[1];
 	        this._updateAspect();
 	        this._hasUpdated = true;
@@ -491,6 +496,7 @@
 	        }
 	    };
 	    GLSlideshow.prototype.destroy = function () {
+	        var _this = this;
 	        this._destroyed = true;
 	        this._isRunning = false;
 	        this._inTransition = false;
@@ -500,9 +506,19 @@
 	            this._gl.bindTexture(this._gl.TEXTURE_2D, null);
 	            this._gl.activeTexture(this._gl.TEXTURE1);
 	            this._gl.bindTexture(this._gl.TEXTURE_2D, null);
+	            this._gl.activeTexture(this._gl.TEXTURE2);
+	            this._gl.bindTexture(this._gl.TEXTURE_2D, null);
+	            this._gl.activeTexture(this._gl.TEXTURE3);
+	            this._gl.bindTexture(this._gl.TEXTURE_2D, null);
+	            this._gl.activeTexture(this._gl.TEXTURE4);
+	            this._gl.bindTexture(this._gl.TEXTURE_2D, null);
+	            this._gl.activeTexture(this._gl.TEXTURE5);
+	            this._gl.bindTexture(this._gl.TEXTURE_2D, null);
 	            this._gl.bindBuffer(this._gl.ARRAY_BUFFER, null);
 	            this._gl.deleteTexture(this._from.texture);
 	            this._gl.deleteTexture(this._to.texture);
+	            this._extraTextures.forEach(function (texture) { return _this._gl.deleteTexture(texture); });
+	            this._extraTextures.length = 0;
 	            this._gl.deleteBuffer(this._vertexBuffer);
 	            this._gl.deleteBuffer(this._uvBuffer);
 	            this._gl.deleteShader(this._vertexShader);
@@ -528,6 +544,20 @@
 	        }
 	        else if (Array.isArray(value) && value.length === 4) {
 	            this._gl.uniform4f(uniformLocation, value[0], value[1], value[2], value[3]);
+	        }
+	        else if (value instanceof HTMLImageElement) {
+	            var textureUnit = this._extraTextures.length === 0 ? this._gl.TEXTURE2 :
+	                this._extraTextures.length === 1 ? this._gl.TEXTURE3 :
+	                    this._extraTextures.length === 2 ? this._gl.TEXTURE4 :
+	                        this._extraTextures.length === 3 ? this._gl.TEXTURE5 :
+	                            null;
+	            if (!textureUnit)
+	                return;
+	            this._gl.activeTexture(textureUnit);
+	            var texture = new Texture(value, this._gl);
+	            this._gl.bindTexture(this._gl.TEXTURE_2D, texture.texture);
+	            this._extraTextures.push(texture);
+	            this._gl.uniform1i(uniformLocation, 1 + this._extraTextures.length);
 	        }
 	    };
 	    GLSlideshow.prototype._updateTexture = function () {

@@ -1,9 +1,9 @@
-import type { ImageSource, Images, GLSlideshowOptions } from './types';
+import type { TextureSource, ImageSource, Images, GLSlideshowOptions } from './types';
 import { EventDispatcher } from './EventDispatcher';
-import { Uniforms } from './shaderLib';
+import { Uniforms } from './shader-lib';
 export declare class GLSlideshow extends EventDispatcher {
     static addShader(effectName: string, source: string, uniforms: Uniforms): void;
-    static convertPowerOfTwo(image: HTMLImageElement): HTMLCanvasElement;
+    static convertPowerOfTwo(image: HTMLImageElement): TextureSource;
     duration: number;
     interval: number;
     private _currentIndex;
@@ -22,6 +22,7 @@ export declare class GLSlideshow extends EventDispatcher {
     private _resolution;
     private _imageAspect;
     private _destroyed;
+    private _extraTextures;
     private _vertexes;
     private _gl;
     private _vertexShader;
@@ -44,7 +45,7 @@ export declare class GLSlideshow extends EventDispatcher {
     remove(order: number): void;
     replace(images: Images): void;
     setEffect(effectName: string): void;
-    updateAspect(imageAspect?: number): void;
+    updateImageAspect(imageAspect?: number): void;
     setSize(w: number, h: number): void;
     render(): void;
     destroy(): void;
