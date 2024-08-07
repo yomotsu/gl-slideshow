@@ -368,6 +368,12 @@ export class GLSlideshow extends EventDispatcher {
 
 	}
 
+	easing( t: number ) {
+
+		return t;
+
+	}
+
 	render() {
 
 		if ( this._destroyed ) return;
@@ -375,7 +381,7 @@ export class GLSlideshow extends EventDispatcher {
 		if ( this._inTransition ) {
 
 			const transitionElapsedTime = Date.now() - this._transitionStartTime;
-			this._progress = this._inTransition ? Math.min( transitionElapsedTime / this.duration, 1 ) : 0;
+			this._progress = this._inTransition ? this.easing( Math.min( transitionElapsedTime / this.duration, 1 ) ) : 0;
 
 			// this._gl.clearColor( 0, 0, 0, 1 );
 			this._gl.uniform1f( this._uniformLocations.progress, this._progress );
