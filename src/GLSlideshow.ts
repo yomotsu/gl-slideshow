@@ -116,6 +116,8 @@ export class GLSlideshow extends EventDispatcher {
 
 		this.setEffect( options.effect || 'crossFade' );
 
+		let initialSlide = true;
+
 		const tick = () => {
 
 			if ( this._destroyed ) return;
@@ -123,8 +125,11 @@ export class GLSlideshow extends EventDispatcher {
 
 			requestAnimationFrame( tick );
 
-			if ( this.interval + this.duration < this._elapsedTime ) {
+			const timeout = initialSlide ? this.interval : this.interval + this.duration;
 
+			if ( timeout < this._elapsedTime ) {
+
+				initialSlide = false;
 				this.to( this.nextIndex );
 				// transition start
 
