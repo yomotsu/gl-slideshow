@@ -1,6 +1,6 @@
-export declare type TextureSource = HTMLImageElement | HTMLCanvasElement;
-export declare type ImageSource = string | TextureSource;
-export declare type Images = ImageSource[];
+export type TextureSource = HTMLImageElement | HTMLCanvasElement;
+export type ImageSource = string | TextureSource;
+export type Images = ImageSource[];
 export interface GLSlideshowOptions {
     canvas?: HTMLCanvasElement;
     width?: number;

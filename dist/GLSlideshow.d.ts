@@ -47,6 +47,7 @@ export declare class GLSlideshow extends EventDispatcher {
     setEffect(effectName: string): void;
     updateImageAspect(imageAspect?: number): void;
     setSize(w: number, h: number): void;
+    easing(t: number): number;
     render(): void;
     destroy(): void;
     private _setUniform;
