@@ -4,16 +4,19 @@
   "author": "Yomotsu",
   "license": "MIT",
   "repository": "yomotsu/gl-slideshow",
-  "jsnext:main": "dist/gl-slideshow.module.js",
-  "module": "dist/gl-slideshow.module.js",
   "main": "dist/gl-slideshow.js",
+  "module": "dist/gl-slideshow.module.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
-    "rollup": "^2.56.3",
-    "rollup-plugin-typescript2": "^0.30.0",
+    "rollup": "^4.20.0",
+    "@rollup/plugin-typescript": "^11.1.6",
     "rollup-watch": "^4.3.1",
-    "terser": "^5.7.2",
-    "typescript": "^4.4.2"
+    "terser": "^5.31.5",
+    "tslib": "^2.6.3",
+    "typescript": "^5.5.4"
   },
   "scripts": {
     "dev": "rollup --config --watch",

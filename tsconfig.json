@@ -4,17 +4,20 @@
     "declarationDir": "./dist",
     "outDir": "./dist",
     "baseUrl": "src",
-    "target": "es5",
+    "target": "es2017",
+    "lib": ["es2017", "dom"],
     "strict": true,
     "removeComments": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "experimentalDecorators": true
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }
